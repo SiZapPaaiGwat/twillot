@@ -3,16 +3,37 @@ import {
   Tweet,
   TimelineEntry,
   TimelineTimelineItem,
+  IndexItem,
 } from '../types'
 
-const DB_VERSION = 3
+const DB_VERSION = 4
 
-function getObjectStore(db: IDBDatabase) {
-  const transaction = db.transaction(['tweets'], 'readwrite')
+function getObjectStore(db: IDBDatabase, tableName = 'tweets') {
+  const transaction = db.transaction([tableName], 'readwrite')
   return {
     transaction,
-    objectStore: transaction.objectStore('tweets'),
+    objectStore: transaction.objectStore(tableName),
   }
+}
+
+function upsertTable(
+  db: IDBDatabase,
+  transaction: IDBTransaction,
+  tableName: string,
+  keyPath: string,
+  indexes: IndexItem[],
+) {
+  let objectStore = db.objectStoreNames.contains(tableName)
+    ? transaction.objectStore(tableName)
+    : db.createObjectStore(tableName, {
+        keyPath: keyPath,
+      })
+
+  indexes.forEach((index) => {
+    if (!objectStore.indexNames.contains(index.name)) {
+      objectStore.createIndex(index.name, index.name, index.options)
+    }
+  })
 }
 
 export function openDb(): Promise<IDBDatabase> {
@@ -33,21 +54,43 @@ export function openDb(): Promise<IDBDatabase> {
       const target = event.target as IDBOpenDBRequest
       const db = target.result
       // DO NOT create a new transaction here
-      let objectStore = db.objectStoreNames.contains('tweets')
-        ? target.transaction.objectStore('tweets')
-        : db.createObjectStore('tweets', {
-            keyPath: 'tweet_id',
-          })
+      upsertTable(db, target.transaction, 'tweets', 'tweet_id', [
+        {
+          name: 'full_text',
+          options: {
+            unique: false,
+          },
+        },
+        {
+          name: 'sort_index',
+          options: {
+            unique: false,
+          },
+        },
+        {
+          name: 'screen_name',
+          options: {
+            unique: false,
+          },
+        },
+        {
+          name: 'tags',
+          options: {
+            unique: false,
+            multiEntry: true,
+          },
+        },
+      ])
 
-      if (!objectStore.indexNames.contains('full_text')) {
-        objectStore.createIndex('full_text', 'full_text', { unique: false })
-      }
-      if (!objectStore.indexNames.contains('sort_index')) {
-        objectStore.createIndex('sort_index', 'sort_index', { unique: false })
-      }
-      if (!objectStore.indexNames.contains('screen_name')) {
-        objectStore.createIndex('screen_name', 'screen_name', { unique: false })
-      }
+      upsertTable(db, target.transaction, 'tags', 'tag_name', [
+        {
+          name: 'parent_id',
+          options: {
+            unique: false,
+            multiEntry: true,
+          },
+        },
+      ])
     }
 
     request.onsuccess = (event: Event) => {

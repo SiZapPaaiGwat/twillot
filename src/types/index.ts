@@ -28,6 +28,23 @@ export interface Tweet {
     url: string[]
     type: string[]
   }
+  tags: string[]
+}
+
+/**
+ * Supertags
+ * multi-to-multi relationship
+ */
+export interface Tag {
+  tag_name: string
+  parent_id: string
+  created_at: number
+  updated_at: number
+}
+
+export interface IndexItem {
+  name: string
+  options: IDBIndexParameters
 }
 
 export interface Header {
