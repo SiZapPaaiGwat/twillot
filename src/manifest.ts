@@ -29,13 +29,13 @@ export default defineManifest({
     service_worker: 'src/background/index.ts',
     type: 'module',
   },
-  // content_scripts: [
-  //   {
-  //     matches: ['http://*/*', 'https://*/*'],
-  //     js: ['src/contentScript/index.ts'],
-  //     run_at: 'document_start',
-  //   },
-  // ],
+  content_scripts: [
+    {
+      matches: ['http://twitter.com/*', 'https://x.com/*'],
+      js: ['src/contentScript/index.ts'],
+      run_at: 'document_start',
+    },
+  ],
   side_panel: {
     default_path: 'pages/sidepanel.html',
   },
