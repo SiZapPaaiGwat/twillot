@@ -2,7 +2,7 @@ import { untrack } from 'solid-js/web'
 
 import { getAuthInfo } from '../libs/browser'
 import { OptionName, Tweet } from '../types'
-import dataStore from './store'
+import dataStore, { mutateStore } from './store'
 import { syncAllBookmarks } from '../libs/bookmark'
 import { AuthStatus, Header } from '../types'
 import {
@@ -14,7 +14,7 @@ import {
   getTopUsers,
 } from '../libs/db/tweets'
 import { FetchError } from '../libs/xfetch'
-import { produce, reconcile, unwrap } from 'solid-js/store'
+import { reconcile, unwrap } from 'solid-js/store'
 import { DAYS, getLastNDaysDates } from '../libs/date'
 import { readConfig, upsertConfig } from '../libs/db/configs'
 
@@ -207,12 +207,10 @@ export async function removeFolder(folder: string) {
 export async function moveToFolder(folder: string, tweet: Tweet) {
   const [store, setStore] = dataStore
   const index = store.tweets.findIndex((t) => t.tweet_id === tweet.tweet_id)
-  await addRecords([{ ...unwrap(tweet), folder }])
-  setStore(
-    produce((state) => {
-      state.tweets[index].folder = folder
-    }),
-  )
+  await addRecords([{ ...unwrap(tweet), folder }], true)
+  mutateStore((state) => {
+    state.tweets[index].folder = folder
+  })
 }
 
 export async function getNextTweet() {

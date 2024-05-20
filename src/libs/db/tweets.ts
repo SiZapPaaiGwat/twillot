@@ -13,7 +13,10 @@ import { parseTwitterQuery } from '../query-parser'
 import { URL_REG } from '../text'
 import { openDb, getObjectStore } from './index'
 
-export async function addRecords(records: Tweet[]): Promise<void> {
+export async function addRecords(
+  records: Tweet[],
+  overwrite = false,
+): Promise<void> {
   const db = await openDb()
   return new Promise((resolve, reject) => {
     const { transaction, objectStore } = getObjectStore(db)
@@ -28,6 +31,11 @@ export async function addRecords(records: Tweet[]): Promise<void> {
 
     records.forEach((record) => {
       if (record) {
+        if (overwrite) {
+          objectStore.put(record)
+          return
+        }
+
         const getRequest = objectStore.get(record.tweet_id)
 
         getRequest.onsuccess = () => {
