@@ -1,7 +1,3 @@
-console.info('Twillot - your personal Twitter copilot is running')
+import { onContentMessage } from '../libs/browser'
 
-document.addEventListener('DOMContentLoaded', () => {
-  const payload = JSON.parse(location.href.split('payload=')[1])
-  console.log('content script loaded')
-  console.log(payload)
-})
+onContentMessage()

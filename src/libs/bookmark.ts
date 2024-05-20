@@ -10,11 +10,12 @@ import {
 import { BookmarksResponse } from '../types'
 import { addLocalItem, getLocalItem } from './browser'
 import xfetch, { FetchError } from './xfetch'
+import { Endpoint } from './api-twitter'
 
 const pageSize = 100
 
 function buildUrl(url: string, cursor?: string) {
-  const [base, query] = url.split('?')
+  const [_, query] = url.split('?')
   const variables = {
     cursor: '',
     count: pageSize,
@@ -23,7 +24,7 @@ function buildUrl(url: string, cursor?: string) {
   if (cursor) {
     variables.cursor = cursor
   }
-  return `${base}?variables=${encodeURIComponent(JSON.stringify(variables))}${query}`
+  return `${Endpoint.LIST_BOOKMARKS}?variables=${encodeURIComponent(JSON.stringify(variables))}${query}`
 }
 
 async function getBookmarks(headers: Header, cursor?: string) {

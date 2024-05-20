@@ -1,35 +1,29 @@
 import { Host } from '../types'
-import { getAuthInfo } from './browser'
+import { getAuthInfo, proxyRequest } from './browser'
 
-enum Endpoint {
-  CREATE_BOOKMARK = `${Host}/i/api/graphql/aoDbu3RHznuiSkQ9aNM67Q/CreateBookmark`,
-  DELETE_BOOKMARK = `${Host}/i/api/graphql/Wlmlj2-xzyS1GN3a6cj-mQ/DeleteBookmark`,
+export enum Endpoint {
+  LIST_BOOKMARKS = `${Host}/i/api/graphql/dLFifLCEpwKWXAuWXoBgmw/Bookmarks`,
+  CREATE_TWEET = `${Host}/i/api/graphql/BTWYQFqX-WbKZOhykzDpRg/CreateTweet`,
 }
 
-function get_query_id(endpoint: string) {
-  return endpoint.split('/').reverse()[1]
-}
-
-export async function removeBookmark(tweet_id: string) {
-  const { token, cookie, csrf } = await getAuthInfo()
-  const data = {
-    variables: { tweet_id },
-    queryId: get_query_id(Endpoint.DELETE_BOOKMARK),
+function get_headers(token: string, csrf: string) {
+  return {
+    Authorization: token,
+    'X-Csrf-Token': csrf,
+    'Content-Type': 'application/json',
+    'X-Twitter-Active-User': 'yes',
+    'X-Twitter-Auth-Type': 'OAuth2Session',
+    'X-Twitter-Client-Language': 'en-us',
   }
+}
 
-  return fetch(`${Host}/i/api/graphql/Wlmlj2-xzyS1GN3a6cj-mQ/DeleteBookmark`, {
-    headers: {
-      'Accept-Language': 'en-US,us;q=0.9',
-      Authorization: token,
-      Cookie: cookie,
-      'Content-Type': 'application/json',
-      'x-csrf-token': csrf,
-      'x-twitter-active-user': 'yes',
-      'x-twitter-auth-type': 'OAuth2Session',
-      'x-twitter-client-language': 'en-us',
-    },
-    referrer: `${Host}/home`,
-    body: JSON.stringify(data),
-    method: 'POST',
-  })
+export async function createTweet(tweetId: string, text: string) {
+  const { token, csrf } = await getAuthInfo()
+  const body = `{"variables":{"tweet_text":"${text}","reply":{"in_reply_to_tweet_id":"${tweetId}","exclude_reply_user_ids":[]},"batch_compose":"BatchSubsequent","dark_request":false,"media":{"media_entities":[],"possibly_sensitive":false},"semantic_annotation_ids":[]},"features":{"communities_web_enable_tweet_community_results_fetch":true,"c9s_tweet_anatomy_moderator_badge_enabled":true,"tweetypie_unmention_optimization_enabled":true,"responsive_web_edit_tweet_api_enabled":true,"graphql_is_translatable_rweb_tweet_is_translatable_enabled":true,"view_counts_everywhere_api_enabled":true,"longform_notetweets_consumption_enabled":true,"responsive_web_twitter_article_tweet_consumption_enabled":true,"tweet_awards_web_tipping_enabled":false,"creator_subscriptions_quote_tweet_preview_enabled":false,"longform_notetweets_rich_text_read_enabled":true,"longform_notetweets_inline_media_enabled":true,"articles_preview_enabled":true,"rweb_video_timestamps_enabled":true,"rweb_tipjar_consumption_enabled":true,"responsive_web_graphql_exclude_directive_enabled":true,"verified_phone_label_enabled":false,"freedom_of_speech_not_reach_fetch_enabled":true,"standardized_nudges_misinfo":true,"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled":true,"responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,"responsive_web_graphql_timeline_navigation_enabled":true,"responsive_web_enhance_cards_enabled":false},"queryId":"BTWYQFqX-WbKZOhykzDpRg"}`
+  return proxyRequest(
+    'POST',
+    Endpoint.CREATE_TWEET,
+    get_headers(token, csrf),
+    body,
+  )
 }
