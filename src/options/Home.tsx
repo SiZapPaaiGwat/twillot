@@ -14,6 +14,7 @@ import {
 import TopN from '../components/TopN'
 import FolderSelect from '../components/FolderSelect'
 import { queryByCondition } from './handlers'
+import Filter from '../components/Filter'
 
 export const Home = () => {
   let listRef: HTMLDivElement
@@ -53,9 +54,9 @@ export const Home = () => {
       </Show>
 
       <div class="mb-4">
-        <h3 class="mb-4 hidden text-lg font-medium lg:block">
-          {store.keyword ? `Search results:` : 'Recent bookmarks:'}{' '}
-        </h3>
+        <div class="my-4">
+          <Filter />
+        </div>
         <For each={store.tweets}>
           {(tweet, index) => (
             <div class="rounded-md p-2 hover:bg-[#121212] hover:bg-opacity-5">

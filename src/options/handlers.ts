@@ -62,12 +62,10 @@ async function query(
 export async function queryByCondition(append = false) {
   const [store] = dataStore
   const tweets = untrack(() => store.tweets)
-  const folder = untrack(() => store.folder)
-  const category = untrack(() => store.category)
   query(
     store.keyword,
-    category,
-    folder,
+    store.folder,
+    store.category,
     append ? tweets[tweets.length - 1]?.tweet_id || '' : '',
     store.pageSize,
     append,

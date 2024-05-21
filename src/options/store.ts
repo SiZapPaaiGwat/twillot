@@ -14,7 +14,7 @@ const activeFont = JSON.parse(
 ) as FontSet | null
 const fontSize = parseInt(localStorage.getItem('fontSize') || '16', 10)
 
-export default createStore({
+const store = createStore({
   keyword: '',
   category: '',
   folder: '',
@@ -44,3 +44,10 @@ export default createStore({
   theme: localStorage.getItem('theme') || 'light',
   isSidePanel: location.pathname.endsWith('sidepanel.html'),
 })
+
+const [state, _] = store
+
+export const isFilterVisible = () =>
+  state.category || state.folder || state.keyword
+
+export default store

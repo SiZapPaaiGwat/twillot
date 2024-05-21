@@ -88,16 +88,6 @@ export const Layout = (props) => {
   }
 
   createEffect(() => {
-    /**
-     * 在查询关键字时自动将 category 和 folder 重置
-     */
-    if (store.keyword) {
-      setStore('category', '')
-      setStore('folder', '')
-    } else {
-      // NOTE 自动跟踪 category 和 folder 的变化
-      console.log(store.category, store.folder)
-    }
     queryByCondition()
   })
 
