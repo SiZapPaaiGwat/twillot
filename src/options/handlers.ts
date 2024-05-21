@@ -10,7 +10,6 @@ import {
   clearFolder,
   countRecords,
   findRecords,
-  getRandomTweet,
   getRencentTweets,
   getTopUsers,
 } from '../libs/db/tweets'
@@ -137,7 +136,7 @@ export async function initSync(keyword = '') {
       err.message == AuthStatus.AUTH_FAILED
     ) {
       setStore('isAuthFailed', true)
-    } else if (err.name == FetchError.TimeoutError) {
+    } else {
       setStore('isForceSyncTimedout', true)
       setStore('isForceSyncing', false)
     }

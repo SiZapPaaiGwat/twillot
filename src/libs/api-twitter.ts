@@ -2,7 +2,7 @@ import { Host } from '../types'
 import { getAuthInfo, proxyRequest } from './browser'
 
 export enum EndpointQuery {
-  LIST_BOOKMARKS = 'dLFifLCEpwKWXAuWXoBgmws',
+  LIST_BOOKMARKS = 'UyNF_BgJ5d5MbtuVukyl7A',
   CREATE_TWEET = 'BTWYQFqX-WbKZOhykzDpRg',
 }
 

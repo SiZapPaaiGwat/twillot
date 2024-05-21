@@ -53,7 +53,7 @@ async function getBookmarks(headers: Header, cursor?: string) {
         ? Math.ceil((parseInt(t) * 1000 - Date.now()) / 60000)
         : 10
       const error = new Error(
-        `Severe error occurred, retry after ${leftTime} minutes.`,
+        `Server error occurred, retry after ${leftTime} minutes.`,
       )
       error.name = FetchError.DataError
       throw error
