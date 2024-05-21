@@ -1,17 +1,13 @@
-import { useNavigate } from '@solidjs/router'
-
 import dataStore from './store'
 import { IconSearch } from '../components/Icons'
 
 export default function Search() {
   const [store, setStore] = dataStore
-  const navigate = useNavigate()
   const onSubmit = async (e) => {
     try {
       e.preventDefault()
       const keyword = e.target.keyword.value.trim()
       setStore('keyword', keyword)
-      navigate('/')
     } catch (err) {}
   }
 

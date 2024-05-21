@@ -1,6 +1,6 @@
 import { createEffect, For, onMount, Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
-import { A, useSearchParams } from '@solidjs/router'
+import { A } from '@solidjs/router'
 
 import dataStore from './store'
 import Indicator from '../components/Indicator'
@@ -30,7 +30,6 @@ import ZenMode from '../components/ZenMode'
 import { createStyleSheet } from '../libs/dom'
 import logo from '../../public/img/logo-128.png'
 import { FolderForm } from '../components/FolderDropDown'
-import { parseTwitterQuery } from '../libs/query-parser'
 import { reconcile, unwrap } from 'solid-js/store'
 import { addRecords } from '../libs/db/tweets'
 
@@ -62,7 +61,6 @@ const allCategories = [
 ]
 
 export const Layout = (props) => {
-  const [searchParams] = useSearchParams()
   const [store, setStore] = dataStore
   /**
    * 仅移动没有分类的 tweets 到指定文件夹
@@ -90,16 +88,16 @@ export const Layout = (props) => {
   }
 
   createEffect(() => {
-    if (searchParams.q) {
-      setStore('keyword', searchParams.q)
-      const { folder } = parseTwitterQuery(searchParams.q)
-      if (folder) {
-        setStore('folder', folder)
-      }
+    /**
+     * 在查询关键字时自动将 category 和 folder 重置
+     */
+    if (store.keyword) {
+      setStore('category', '')
+      setStore('folder', '')
+    } else {
+      // NOTE 自动跟踪 category 和 folder 的变化
+      console.log(store.category, store.folder)
     }
-  })
-
-  createEffect(() => {
     queryByCondition()
   })
 
@@ -124,7 +122,7 @@ export const Layout = (props) => {
   onMount(() => {
     if (!store.isSidePanel) {
       initHistory()
-      initSync(searchParams.q)
+      initSync()
       initFolders()
     }
   })
@@ -242,6 +240,7 @@ export const Layout = (props) => {
                                 <span
                                   class="cursor-pointer"
                                   onClick={(e) => {
+                                    e.stopPropagation()
                                     moveToFolder(folder)
                                   }}
                                 >
@@ -251,7 +250,7 @@ export const Layout = (props) => {
                               <span
                                 class="cursor-pointer"
                                 onClick={(e) => {
-                                  e.preventDefault()
+                                  e.stopPropagation()
                                   removeFolder(folder)
                                 }}
                               >
