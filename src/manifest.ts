@@ -51,7 +51,24 @@ export default defineManifest({
     },
   ],
   host_permissions: ['https://x.com/*', 'https://twitter.com/*'],
-  permissions: ['storage', 'webRequest', 'cookies', 'tabs', 'sidePanel'],
+  permissions: [
+    'storage',
+    'webRequest',
+    'cookies',
+    'tabs',
+    'sidePanel',
+    'declarativeNetRequest',
+    'declarativeNetRequestWithHostAccess',
+  ],
+  declarative_net_request: {
+    rule_resources: [
+      {
+        id: 'origin_rules',
+        enabled: true,
+        path: 'src/rules.json',
+      },
+    ],
+  },
   // chrome_url_overrides: {
   //   newtab: 'pages/newtab.html',
   // },
