@@ -25,8 +25,7 @@ const store = createStore({
   tweets: new Array<Tweet>(),
   selectedTweet: -1,
   topUsers: new Array<User>(),
-  folders: new Array<string>(),
-  folderInfo: new Map<string, number>(),
+  folders: new Array<{ name: string; count: number }>(),
   history: new Array<{ date: string; count: number }>(DAYS).fill({
     date: '',
     count: 0,

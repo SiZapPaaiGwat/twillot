@@ -1,19 +1,13 @@
 import { createEffect, For, onMount, Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
+import { reconcile, unwrap } from 'solid-js/store'
 import { A } from '@solidjs/router'
 
 import dataStore from './store'
 import Indicator from '../components/Indicator'
 import Authenticate from './Authenticate'
 import Search from './Search'
-import {
-  initFolders,
-  initHistory,
-  initSync,
-  queryByCondition,
-  removeFolder,
-  resetQuery,
-} from './handlers'
+import { initHistory, initSync, queryByCondition, resetQuery } from './handlers'
 import { Alert } from '../components/Alert'
 import Notification from '../components/Notification'
 import {
@@ -30,9 +24,9 @@ import ZenMode from '../components/ZenMode'
 import { createStyleSheet } from '../libs/dom'
 import logo from '../../public/img/logo-128.png'
 import { FolderForm } from '../components/FolderDropDown'
-import { reconcile, unwrap } from 'solid-js/store'
 import { addRecords } from '../libs/db/tweets'
 import { allCategories } from '../constants'
+import { initFolders, removeFolder } from '../stores/folders'
 
 export const Layout = (props) => {
   const [store, setStore] = dataStore
@@ -195,17 +189,17 @@ export const Layout = (props) => {
                         <li>
                           <A
                             href="/"
-                            class={`${folder === store.folder ? 'text-blue-500 ' : ''} group flex w-full items-center rounded-lg p-1 pl-11 transition duration-75`}
-                            onClick={() => setStore('folder', folder)}
+                            class={`${folder.name === store.folder ? 'text-blue-500 ' : ''} group flex w-full items-center rounded-lg p-1 pl-11 transition duration-75`}
+                            onClick={() => setStore('folder', folder.name)}
                           >
-                            {folder}
+                            {folder.name}
                             <div class="ml-4 hidden flex-1 items-center justify-end gap-2 group-hover:flex">
                               <Show when={store.keyword}>
                                 <span
                                   class="cursor-pointer"
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    moveToFolder(folder)
+                                    moveToFolder(folder.name)
                                   }}
                                 >
                                   <IconFolderMove />
@@ -215,14 +209,14 @@ export const Layout = (props) => {
                                 class="cursor-pointer"
                                 onClick={(e) => {
                                   e.stopPropagation()
-                                  removeFolder(folder)
+                                  removeFolder(folder.name)
                                 }}
                               >
                                 <IconTrash />
                               </span>
                             </div>
                             <span class="mr-1 flex-1 items-center text-right text-xs font-medium opacity-60 group-hover:hidden">
-                              {store.folderInfo[folder] || 0}
+                              {folder.count}
                             </span>
                           </A>
                         </li>
