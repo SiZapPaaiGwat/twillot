@@ -271,6 +271,15 @@ export const Layout = (props) => {
                   </span>
                 </div>
               </li>
+              <li>
+                <a
+                  class="cursor-d flex items-center rounded-lg p-2  hover:bg-gray-100 dark:hover:bg-gray-700"
+                  href="/workflows"
+                >
+                  <IconTag />
+                  <span class="ms-3 flex-1 whitespace-nowrap">Workflows</span>
+                </a>
+              </li>
             </ul>
           </div>
         </aside>

@@ -1,4 +1,4 @@
-import { createStore } from 'solid-js/store'
+import { produce, createStore } from 'solid-js/store'
 
 import {
   type FontSet,
@@ -8,6 +8,7 @@ import {
   type CountInfo,
 } from '../types'
 import { DAYS } from '../libs/date'
+import { Workflow } from '../stores/workflows'
 
 const activeFont = JSON.parse(
   localStorage.getItem('activeFont') || 'null',
@@ -43,11 +44,14 @@ const store = createStore({
   fontSize,
   theme: localStorage.getItem('theme') || 'light',
   isSidePanel: location.pathname.endsWith('sidepanel.html'),
+  workflows: new Array<Workflow>(),
 })
 
-const [state, _] = store
+const [state, setStore] = store
 
 export const isFilterVisible = () =>
   state.category || state.folder || state.keyword
+
+export const mutateStore = (fn: (state: any) => void) => setStore(produce(fn))
 
 export default store

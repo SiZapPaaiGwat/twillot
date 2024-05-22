@@ -414,3 +414,38 @@ export const IconTrash = () => (
     />
   </svg>
 )
+
+export const IconArrow = () => (
+  <svg
+    width="100"
+    height="30"
+    viewBox="0 0 100 30"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <line
+      x1="0"
+      y1="15"
+      x2="100"
+      y2="15"
+      stroke="currentColor"
+      stroke-width="2"
+    />
+    <line
+      x1="100"
+      y1="15"
+      x2="85"
+      y2="5"
+      stroke="currentColor"
+      stroke-width="2"
+    />
+    <line
+      x1="100"
+      y1="15"
+      x2="85"
+      y2="25"
+      stroke="currentColor"
+      stroke-width="2"
+    />
+  </svg>
+)
