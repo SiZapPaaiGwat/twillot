@@ -32,33 +32,7 @@ import logo from '../../public/img/logo-128.png'
 import { FolderForm } from '../components/FolderDropDown'
 import { reconcile, unwrap } from 'solid-js/store'
 import { addRecords } from '../libs/db/tweets'
-
-const allCategories = [
-  {
-    name: 'Image',
-    value: 'has_image',
-  },
-  {
-    name: 'Video',
-    value: 'has_video',
-  },
-  {
-    name: 'Gif',
-    value: 'has_gif',
-  },
-  {
-    name: 'Link',
-    value: 'has_link',
-  },
-  {
-    name: 'Quote',
-    value: 'has_quote',
-  },
-  {
-    name: 'Article',
-    value: 'is_long_text',
-  },
-]
+import { allCategories } from '../constants'
 
 export const Layout = (props) => {
   const [store, setStore] = dataStore
