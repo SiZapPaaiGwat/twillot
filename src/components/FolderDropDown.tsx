@@ -1,25 +1,14 @@
-import dataStore from '../options/store'
-import { upsertConfig } from '../libs/db/configs'
-import { OptionName } from '../types'
+import { addFolder } from '../stores/folders'
 
 export const FolderForm = () => {
-  const [store, setStore] = dataStore
-  const addFolder = async (e) => {
+  const submit = async (e) => {
     e.preventDefault()
-    const folderName = e.target.folder.value.trim()
-    if (folderName && store.folders.includes(folderName) === false) {
-      const newFolders = [...store.folders, folderName]
-      setStore('folders', newFolders)
-      e.target.folder.value = ''
-      await upsertConfig({
-        option_name: OptionName.FOLDER,
-        option_value: newFolders,
-      })
-    }
+    await addFolder(e.target.folder.value)
+    e.target.folder.value = ''
   }
 
   return (
-    <form class="flex items-center" onSubmit={addFolder}>
+    <form class="flex items-center" onSubmit={submit}>
       <input
         type="text"
         name="folder"

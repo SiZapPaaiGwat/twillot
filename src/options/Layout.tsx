@@ -25,36 +25,15 @@ import ZenMode from '../components/ZenMode'
 import { createStyleSheet } from '../libs/dom'
 import logo from '../../public/img/logo-128.png'
 import { FolderForm } from '../components/FolderDropDown'
-import { addRecords } from '../libs/db/tweets'
 import { allCategories } from '../constants'
-import { initFolders, removeFolder } from '../stores/folders'
+import {
+  initFolders,
+  moveTweetsToFolder,
+  removeFolder,
+} from '../stores/folders'
 
 export const Layout = (props) => {
   const [store, setStore] = dataStore
-  /**
-   * 仅移动没有分类的 tweets 到指定文件夹
-   * @param folder
-   */
-  const moveToFolder = async (folder: string) => {
-    try {
-      let tweets = unwrap(store.tweets)
-        .filter((x) => !x.folder)
-        .map((tweet) => ({
-          ...tweet,
-          folder,
-        }))
-      await addRecords(tweets)
-      await initFolders()
-      const newTweets = store.tweets.map((tweet) => ({
-        ...tweet,
-        folder: tweet.folder || folder,
-      }))
-      setStore('tweets', reconcile(newTweets))
-      alert(`${tweets.length} tweets has been moved to folder ${folder}`)
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
   createEffect(() => {
     queryByCondition()
@@ -200,7 +179,7 @@ export const Layout = (props) => {
                                   class="cursor-pointer"
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    moveToFolder(folder.name)
+                                    moveTweetsToFolder(folder.name)
                                   }}
                                 >
                                   <IconFolderMove />

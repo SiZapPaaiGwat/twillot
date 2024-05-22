@@ -49,7 +49,7 @@ export function openDb(): Promise<IDBDatabase> {
       const db = target.result
       // DO NOT create a new transaction here
       const indexFields =
-        'full_text,sort_index,screen_name,created_at,has_image,has_video,has_link,has_quote,is_long_text'
+        'full_text,sort_index,screen_name,created_at,has_image,has_video,has_link,has_quote,is_long_text,folder'
           .split(',')
           .map((field) => ({
             name: field,
@@ -58,13 +58,6 @@ export function openDb(): Promise<IDBDatabase> {
               multiEntry: false,
             },
           }))
-      indexFields.push({
-        name: 'folder',
-        options: {
-          unique: false,
-          multiEntry: false,
-        },
-      })
       indexFields.push({
         name: 'tags',
         options: {
