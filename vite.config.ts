@@ -5,6 +5,12 @@ import manifest from './src/manifest.jsx'
 
 export default defineConfig(({ mode }) => {
   return {
+    server: {
+      hmr: {
+        host: 'localhost',
+        port: 9527,
+      },
+    },
     build: {
       emptyOutDir: true,
       outDir: 'build',

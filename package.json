@@ -19,7 +19,7 @@
     "node": ">=14.18.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,md}'",
