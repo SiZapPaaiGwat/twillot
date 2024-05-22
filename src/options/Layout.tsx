@@ -1,7 +1,6 @@
 import { createEffect, For, onMount, Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
-import { reconcile, unwrap } from 'solid-js/store'
-import { A } from '@solidjs/router'
+import { A, useSearchParams } from '@solidjs/router'
 
 import dataStore from './store'
 import Indicator from '../components/Indicator'
@@ -34,6 +33,13 @@ import {
 
 export const Layout = (props) => {
   const [store, setStore] = dataStore
+  const [searchParams] = useSearchParams()
+
+  createEffect(() => {
+    if (searchParams.q) {
+      setStore('keyword', searchParams.q)
+    }
+  })
 
   createEffect(() => {
     queryByCondition()
@@ -60,7 +66,7 @@ export const Layout = (props) => {
   onMount(() => {
     if (!store.isSidePanel) {
       initHistory()
-      initSync()
+      initSync(searchParams.q)
       initFolders()
     }
   })

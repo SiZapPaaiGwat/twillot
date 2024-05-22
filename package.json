@@ -1,13 +1,13 @@
 {
   "name": "Twillot",
-  "displayName": "Twillot - X Copilot",
+  "displayName": "Twillot - X/Twitter Copilot",
   "version": "0.7.0",
   "author": "simon@lionjs.com",
-  "description": "Organize your X bookmarks, streamline your X workflow experience.",
+  "description": "Organize X/Twitter bookmarks, streamline X/Twitter workflow experience.",
   "type": "module",
   "license": "MIT",
   "engines": {
-    "node": ">=14.18.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
