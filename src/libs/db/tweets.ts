@@ -25,9 +25,24 @@ export async function addRecords(records: Tweet[]): Promise<void> {
         'Transaction error: ' + (event.target as IDBRequest).error?.toString(),
       )
     }
+
     records.forEach((record) => {
       if (record) {
-        objectStore.put(record)
+        const getRequest = objectStore.get(record.tweet_id)
+
+        getRequest.onsuccess = () => {
+          if (!getRequest.result) {
+            objectStore.put(record)
+          }
+        }
+
+        getRequest.onerror = (event: Event) => {
+          console.error(
+            'Get request error: ' +
+              record.tweet_id +
+              (event.target as IDBRequest).error?.toString(),
+          )
+        }
       }
     })
   })
