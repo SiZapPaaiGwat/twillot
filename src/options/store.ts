@@ -49,9 +49,12 @@ const store = createStore({
 
 const [state, setStore] = store
 
+type StoreType = typeof state
+
 export const isFilterVisible = () =>
   state.category || state.folder || state.keyword
 
-export const mutateStore = (fn: (state: any) => void) => setStore(produce(fn))
+export const mutateStore = (fn: (state: StoreType) => void) =>
+  setStore(produce(fn))
 
 export default store
