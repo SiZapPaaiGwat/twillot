@@ -1,11 +1,10 @@
+const props = {
+  xmlns: 'https://www.w3.org/2000/svg',
+  fill: 'none',
+}
+
 export const IconCheck = () => (
-  <svg
-    class="h-6 w-6"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" aria-hidden="true" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -17,12 +16,7 @@ export const IconCheck = () => (
 )
 
 export const IconTextSize = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -34,12 +28,7 @@ export const IconTextSize = () => (
 )
 
 export const IconTextFont = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -51,12 +40,7 @@ export const IconTextFont = () => (
 )
 
 export const IconClose = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -69,7 +53,7 @@ export const IconClose = () => (
 
 export const IconExpand = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="https://www.w3.org/2000/svg"
     width="18"
     height="18"
     fill="none"
@@ -86,12 +70,7 @@ export const IconExpand = () => (
 )
 
 export const IconRefresh = () => (
-  <svg
-    class="h-8 w-8"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-8 w-8" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -103,12 +82,7 @@ export const IconRefresh = () => (
 )
 
 export const IconLeft = () => (
-  <svg
-    class="h-8 w-8"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-8 w-8" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -120,12 +94,7 @@ export const IconLeft = () => (
 )
 
 export const IconRight = () => (
-  <svg
-    class="h-8 w-8"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-8 w-8" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -137,12 +106,7 @@ export const IconRight = () => (
 )
 
 export const IconAnnotation = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -154,12 +118,7 @@ export const IconAnnotation = () => (
 )
 
 export const IconMagic = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -171,12 +130,7 @@ export const IconMagic = () => (
 )
 
 export const IconFolder = (props) => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -188,12 +142,7 @@ export const IconFolder = (props) => (
 )
 
 export const IconFolderPlus = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -205,12 +154,7 @@ export const IconFolderPlus = () => (
 )
 
 export const IconFolderMove = () => (
-  <svg
-    class="h-5 w-5"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-5 w-5" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -224,7 +168,7 @@ export const IconFolderMove = () => (
 export const IconQuote = () => (
   <svg
     class="h-4 w-4 text-gray-500 dark:text-gray-300"
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="https://www.w3.org/2000/svg"
     fill="currentColor"
     viewBox="0 0 18 14"
   >
@@ -233,12 +177,7 @@ export const IconQuote = () => (
 )
 
 export const IconArrowDown = () => (
-  <svg
-    class="ms-2.5 h-2.5 w-2.5"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 10 6"
-  >
+  <svg class="ms-2.5 h-2.5 w-2.5" {...props} viewBox="0 0 10 6">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -250,12 +189,7 @@ export const IconArrowDown = () => (
 )
 
 export const IconSearch = () => (
-  <svg
-    class="mx-4 h-4 w-4"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 20 20"
-  >
+  <svg class="mx-4 h-4 w-4" {...props} viewBox="0 0 20 20">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -267,12 +201,7 @@ export const IconSearch = () => (
 )
 
 export const IconPlus = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -284,12 +213,7 @@ export const IconPlus = () => (
 )
 
 export const IconChevronArrowDown = () => (
-  <svg
-    class="h-6 w-6 cursor-pointer"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6 cursor-pointer" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -302,7 +226,7 @@ export const IconChevronArrowDown = () => (
 
 export const IconUp = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="https://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="currentColor"
     class="ml-[2px] h-5 w-5"
@@ -311,13 +235,8 @@ export const IconUp = () => (
   </svg>
 )
 
-export const IconBookmark = () => (
-  <svg
-    class="h-6 w-6 "
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+export const IconBookmark = ({ cls = 'h-6 w-6' }) => (
+  <svg class={cls} {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -329,12 +248,7 @@ export const IconBookmark = () => (
 )
 
 export const IconTag = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -345,14 +259,8 @@ export const IconTag = () => (
   </svg>
 )
 
-export const IconFolders = () => (
-  <svg
-    class="h-6 w-6"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+export const IconFolders = ({ cls = 'h-6 w-6' }) => (
+  <svg class={cls} {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -364,12 +272,7 @@ export const IconFolders = () => (
 )
 
 export const IconSun = () => (
-  <svg
-    class="h-6 w-6 "
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6 " {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -381,13 +284,7 @@ export const IconSun = () => (
 )
 
 export const IconMoon = () => (
-  <svg
-    class="h-6 w-6"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" aria-hidden="true" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -399,12 +296,7 @@ export const IconMoon = () => (
 )
 
 export const IconTrash = () => (
-  <svg
-    class="h-5 w-5"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-5 w-5" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
@@ -421,7 +313,7 @@ export const IconArrow = () => (
     height="30"
     viewBox="0 0 100 30"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="https://www.w3.org/2000/svg"
   >
     <line
       x1="0"
@@ -451,12 +343,7 @@ export const IconArrow = () => (
 )
 
 export const IconBranch = () => (
-  <svg
-    class="h-6 w-6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
+  <svg class="h-6 w-6" {...props} viewBox="0 0 24 24">
     <path
       stroke="currentColor"
       stroke-linecap="round"
