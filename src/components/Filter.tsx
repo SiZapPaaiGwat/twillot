@@ -9,7 +9,7 @@ export default function Filter() {
   return (
     <Show when={isFilterVisible()}>
       <div class="flex items-center gap-2">
-        <span class="font-medium">Filter:</span>
+        <h3 class="text-lg font-medium">Filter:</h3>
         <Show when={store.category}>
           <button
             onClick={() => setStore('category', '')}

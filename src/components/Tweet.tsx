@@ -108,10 +108,7 @@ export const MediaItems = (props: { media_items: Media[] }) => {
 
 export function Image(props: { src: string; alt?: string; url?: string }) {
   return (
-    <figure
-      class="h-auto w-full cursor-pointer grayscale filter transition-all duration-300 hover:grayscale-0"
-      title={props.alt || ''}
-    >
+    <figure class="h-auto w-full cursor-pointer" title={props.alt || ''}>
       <a href={props.url || props.src} target="_blank">
         <img class="rounded-lg" src={props.src} loading="lazy" />
       </a>

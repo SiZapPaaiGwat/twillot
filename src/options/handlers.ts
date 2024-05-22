@@ -41,7 +41,7 @@ async function query(
   limit = 100,
   append = false,
 ) {
-  const [_, setStore] = dataStore
+  const [store, setStore] = dataStore
   const start = new Date().getTime()
   const tweets = await findRecords(keyword, category, folder, lastId, limit)
   setStore('hasMore', tweets.length === limit)
@@ -51,7 +51,7 @@ async function query(
     }
   } else {
     setStore('tweets', tweets)
-    if (keyword.trim() || category) {
+    if (!store.isSidePanel && (keyword.trim() || category || folder)) {
       window.scrollTo(0, 720)
     }
   }

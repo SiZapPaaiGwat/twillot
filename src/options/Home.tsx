@@ -54,7 +54,7 @@ export const Home = () => {
       </Show>
 
       <div class="mb-4">
-        <div class="my-4">
+        <div class="sticky z-50 hidden bg-white py-4 dark:bg-[#121212] lg:top-[66px] lg:block">
           <Filter />
         </div>
         <For each={store.tweets}>

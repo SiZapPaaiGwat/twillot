@@ -1,20 +1,11 @@
 {
   "name": "Twillot",
-  "displayName": "Twillot - Twitter/X Copilot",
-  "version": "0.6.0",
+  "displayName": "Twillot - X Copilot",
+  "version": "0.7.0",
   "author": "simon@lionjs.com",
-  "description": "Search and organize your Twitter/X bookmarks",
+  "description": "Organize your X bookmarks, streamline your X workflow experience.",
   "type": "module",
   "license": "MIT",
-  "keywords": [
-    "twitter",
-    "bookmark",
-    "chrome-extension",
-    "solid",
-    "solidjs",
-    "vite",
-    "create-chrome-ext"
-  ],
   "engines": {
     "node": ">=14.18.0"
   },
