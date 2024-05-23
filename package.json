@@ -11,6 +11,8 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "build": "vite build",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,md}'",
@@ -18,17 +20,23 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.19",
+    "@solidjs/testing-library": "^0.8.8",
+    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/user-event": "^14.5.2",
     "@types/chrome": "^0.0.246",
     "autoprefixer": "^10.4.19",
+    "fake-indexeddb": "^6.0.0",
     "gulp": "^4.0.2",
     "gulp-zip": "^6.0.0",
+    "jsdom": "^24.0.0",
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.2.2",
     "vite": "^4.4.11",
-    "vite-plugin-solid": "^2.7.1"
+    "vite-plugin-solid": "^2.7.1",
+    "vitest": "^1.6.0"
   },
   "dependencies": {
     "@solidjs/router": "^0.13.2",

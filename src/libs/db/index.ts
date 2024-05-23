@@ -2,7 +2,13 @@ import { IndexedDbIndexItem } from '../../types'
 
 export const DB_VERSION = 10
 
-export function getObjectStore(db: IDBDatabase, tableName = 'tweets') {
+export const DB_NAME = 'twillot'
+
+export const TWEETS_TABLE_NAME = 'tweets'
+
+export const CONFIGS_TABLE_NAME = 'configs'
+
+export function getObjectStore(db: IDBDatabase, tableName = TWEETS_TABLE_NAME) {
   const transaction = db.transaction([tableName], 'readwrite')
   return {
     transaction,
@@ -37,7 +43,7 @@ export function openDb(): Promise<IDBDatabase> {
       return
     }
 
-    const request = window.indexedDB.open('twillot', DB_VERSION)
+    const request = window.indexedDB.open(DB_NAME, DB_VERSION)
     request.onerror = (event: Event) => {
       reject(
         'Database error: ' +
@@ -65,8 +71,20 @@ export function openDb(): Promise<IDBDatabase> {
           multiEntry: true,
         },
       })
-      createSchema(db, target.transaction, 'tweets', 'tweet_id', indexFields)
-      createSchema(db, target.transaction, 'configs', 'option_name', [])
+      createSchema(
+        db,
+        target.transaction,
+        TWEETS_TABLE_NAME,
+        'tweet_id',
+        indexFields,
+      )
+      createSchema(
+        db,
+        target.transaction,
+        CONFIGS_TABLE_NAME,
+        'option_name',
+        [],
+      )
     }
 
     request.onsuccess = (event: Event) => {
