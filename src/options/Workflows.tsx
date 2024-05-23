@@ -33,7 +33,7 @@ const WorkflowConfigurator = () => {
               <span class="font-bold">Workflow #{workflow.id}</span>
             </div>
 
-            <div class="mb-4 flex items-center">
+            <div class="mb-4 flex w-full items-center overflow-x-auto">
               <div class="w-56 rounded-lg border border-gray-200 text-sm text-gray-500 shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
                 <div class="group flex rounded-t-lg border-b border-gray-200 bg-gray-100 px-3 py-2 dark:border-gray-600 dark:bg-gray-700">
                   <h3 class="ml-6 flex-1 text-center font-semibold text-gray-900 dark:text-white">

@@ -226,20 +226,20 @@ export const Layout = (props) => {
                 </div>
               </li>
               <li>
-                <div class="cursor-d flex items-center rounded-lg p-2  hover:bg-gray-100 dark:hover:bg-gray-700">
+                <a
+                  class="cursor-d flex items-center rounded-lg p-2  hover:bg-gray-100 dark:hover:bg-gray-700"
+                  href="/workflows"
+                >
                   <IconBranch />
                   <span class="ms-3 flex-1 whitespace-nowrap">Workflows</span>
-                  <span class="ms-3 inline-flex items-center justify-center text-xs ">
-                    Coming Soon
-                  </span>
-                </div>
+                </a>
               </li>
             </ul>
           </div>
         </aside>
       </Show>
 
-      <main class=" bg-white text-gray-700 dark:bg-[#121212] dark:text-white">
+      <main class="bg-white text-gray-700 dark:bg-[#121212] dark:text-white lg:ml-72">
         <div
           class={`flex-col items-center pt-28 lg:pt-[64px] ${store.selectedTweet > -1 ? 'hidden' : ''}`}
         >
