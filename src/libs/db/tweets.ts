@@ -495,14 +495,19 @@ export async function getRandomTweet(skip: number): Promise<Tweet | undefined> {
   return new Promise((resolve, reject) => {
     const { objectStore } = getObjectStore(db)
     const request = objectStore.openCursor()
+    let skipped = false
 
     request.onsuccess = (event) => {
       const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result
       if (cursor) {
+        if (skipped) {
+          resolve(cursor.value)
+          return
+        }
         cursor.advance(skip)
-        resolve(cursor.value)
+        skipped = true
       } else {
-        resolve(undefined)
+        resolve(null)
       }
     }
 
