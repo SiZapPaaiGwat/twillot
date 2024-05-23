@@ -13,18 +13,19 @@ export default defineConfig(({ mode }) => {
       },
     },
     test: {
-      globals: true, // makes `describe`, `expect`, `it` etc. available globally
+      globals: true,
       transformMode: {
-        web: [/\.[jt]sx?$/], // transforms .js, .jsx, .ts, .tsx files
+        web: [/\.[jt]sx?$/],
       },
       coverage: {
         resolve: {
           conditions: ['development', 'browser'],
         },
+        include: ['src/**/*.ts', 'src/**/*.tsx'],
         provider: 'v8', // or 'istanbul'
         reporter: ['text', 'html'], // or 'json', 'lcov'
       },
-      environment: 'jsdom', // or 'happy-dom', 'node'
+      environment: 'jsdom',
       pool: 'forks',
       poolOptions: {
         forks: {
