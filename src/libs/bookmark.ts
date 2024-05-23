@@ -10,7 +10,7 @@ import {
 import { BookmarksResponse } from '../types'
 import { addLocalItem, getLocalItem } from './browser'
 import xfetch, { FetchError } from './xfetch'
-import { Endpoint } from './api-twitter'
+import { Endpoint } from './api/twitter'
 
 const pageSize = 100
 
