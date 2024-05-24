@@ -1,9 +1,6 @@
 import { Host, X_DOMAIN } from '../types'
 import { Workflow } from '../types/workflow'
-import TriggerMonitor from './workflow'
-
-const triggerInstance = new TriggerMonitor()
-triggerInstance.init()
+import monitor from './workflow'
 
 export const getRequestBody = (
   details: chrome.webRequest.WebRequestBodyDetails,
@@ -31,8 +28,7 @@ export function startTriggerListening() {
         return
       }
 
-      triggerInstance.setup(details)
-      triggerInstance.emit()
+      monitor.setup(details)
     },
     { urls: [`${Host}/*`] },
     ['requestBody'],

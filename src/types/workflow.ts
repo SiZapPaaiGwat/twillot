@@ -1,4 +1,4 @@
-import { Host } from './index'
+import { Host, Tweet } from './index'
 
 const BASE_PATH = `${Host}/i/api/graphql/`
 
@@ -38,12 +38,20 @@ export enum TriggerNames {
 
 export type Trigger = keyof typeof TriggerTypes
 
+export enum ActionTypes {
+  translate = 'translate',
+  summarize = 'summarize',
+  question = 'question',
+  extend = 'extend',
+  webhook = 'webhook',
+}
+
 export enum ActionNames {
-  translate = 'Translate',
-  summarize = 'Summarize',
-  question = 'Question',
-  extend = 'Extend',
-  webhook = 'Send a webhook',
+  translate = 'Translate this tweet',
+  summarize = 'Summarize this tweet',
+  question = 'Generate some questions',
+  extend = 'Extend this tweet',
+  webhook = 'Forward to a webhook',
 }
 
 export type Action = keyof typeof ActionNames
@@ -53,3 +61,11 @@ export interface Workflow {
   when: Trigger
   thenList: Action[]
 }
+
+export interface ActionContext {
+  tweet: Tweet | null
+  requestBody: any
+  prevResponse: any
+}
+
+export type ActionHandler = (context: ActionContext) => Promise<any>
