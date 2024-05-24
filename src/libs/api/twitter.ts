@@ -2,9 +2,9 @@ import { BookmarksResponse, Host } from '../../types'
 import { getAuthInfo } from '../browser'
 import fetchWithTimeout, { FetchError } from '../xfetch'
 
-const basePath = `${Host}/i/api/graphql/`
-
-const features = {
+const pageSize = 100
+const BASE_PATH = `${Host}/i/api/graphql/`
+const COMMON_FEATURES = {
   creator_subscriptions_tweet_preview_api_enabled: true,
   c9s_tweet_anatomy_moderator_badge_enabled: true,
   tweetypie_unmention_optimization_enabled: true,
@@ -22,10 +22,21 @@ const features = {
   freedom_of_speech_not_reach_fetch_enabled: true,
   standardized_nudges_misinfo: true,
   tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled: true,
-  responsive_web_media_download_video_enabled: false,
   responsive_web_graphql_skip_user_profile_image_extensions_enabled: false,
   responsive_web_graphql_timeline_navigation_enabled: true,
   responsive_web_enhance_cards_enabled: false,
+}
+const FEATURES = {
+  ...COMMON_FEATURES,
+  responsive_web_media_download_video_enabled: false,
+}
+const BOOKMARK_FEATURES = {
+  ...COMMON_FEATURES,
+  graphql_timeline_v2_bookmark_timeline: true,
+  rweb_tipjar_consumption_enabled: true,
+  communities_web_enable_tweet_community_results_fetch: true,
+  articles_preview_enabled: true,
+  creator_subscriptions_quote_tweet_preview_enabled: false,
 }
 
 enum EndpointQuery {
@@ -35,9 +46,9 @@ enum EndpointQuery {
 }
 
 export enum Endpoint {
-  LIST_BOOKMARKS = `${basePath}${EndpointQuery.LIST_BOOKMARKS}/Bookmarks`,
-  CREATE_TWEET = `${basePath}${EndpointQuery.CREATE_TWEET}/CreateTweet`,
-  DELETE_TWEET = `${basePath}${EndpointQuery.DELETE_TWEET}/DeleteTweet`,
+  LIST_BOOKMARKS = `${BASE_PATH}${EndpointQuery.LIST_BOOKMARKS}/Bookmarks`,
+  CREATE_TWEET = `${BASE_PATH}${EndpointQuery.CREATE_TWEET}/CreateTweet`,
+  DELETE_TWEET = `${BASE_PATH}${EndpointQuery.DELETE_TWEET}/DeleteTweet`,
 }
 
 function get_headers(token: string, csrf: string) {
@@ -62,46 +73,63 @@ async function request(url: string, options: RequestInit) {
     },
   })
   const data = await res.json()
+  if ('errors' in data) {
+    const t = res.headers.get('X-Rate-Limit-Reset')
+    const leftTime = t
+      ? Math.ceil((parseInt(t) * 1000 - Date.now()) / 60000)
+      : 10
+    const error = new Error(
+      `Server error occurred, retry after ${leftTime} minutes.`,
+    )
+    error.name = FetchError.DataError
+    throw error
+  }
+
   return data
 }
 
-export async function createTweet(tweetId: string, text: string) {
-  const body = `{"variables":{"tweet_text":"${text}","reply":{"in_reply_to_tweet_id":"${tweetId}","exclude_reply_user_ids":[]},"batch_compose":"BatchSubsequent","dark_request":false,"media":{"media_entities":[],"possibly_sensitive":false},"semantic_annotation_ids":[]},"features":{"communities_web_enable_tweet_community_results_fetch":true,"c9s_tweet_anatomy_moderator_badge_enabled":true,"tweetypie_unmention_optimization_enabled":true,"responsive_web_edit_tweet_api_enabled":true,"graphql_is_translatable_rweb_tweet_is_translatable_enabled":true,"view_counts_everywhere_api_enabled":true,"longform_notetweets_consumption_enabled":true,"responsive_web_twitter_article_tweet_consumption_enabled":true,"tweet_awards_web_tipping_enabled":false,"creator_subscriptions_quote_tweet_preview_enabled":false,"longform_notetweets_rich_text_read_enabled":true,"longform_notetweets_inline_media_enabled":true,"articles_preview_enabled":true,"rweb_video_timestamps_enabled":true,"rweb_tipjar_consumption_enabled":true,"responsive_web_graphql_exclude_directive_enabled":true,"verified_phone_label_enabled":false,"freedom_of_speech_not_reach_fetch_enabled":true,"standardized_nudges_misinfo":true,"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled":true,"responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,"responsive_web_graphql_timeline_navigation_enabled":true,"responsive_web_enhance_cards_enabled":false},"queryId":"${EndpointQuery.CREATE_TWEET}"}`
-  const data = await request(Endpoint.CREATE_TWEET, {
-    body,
+export async function createTweet({ text = '', replyTweetId = '' }) {
+  if (!text) {
+    throw new Error('Text is required')
+  }
+
+  const variables = {
+    tweet_text: text,
+    dark_request: false,
+    media: {
+      media_entities: [],
+      possibly_sensitive: false,
+    },
+    semantic_annotation_ids: [],
+  }
+  if (replyTweetId) {
+    variables['reply'] = {
+      in_reply_to_tweet_id: replyTweetId,
+      exclude_reply_user_ids: [],
+    }
+  }
+  return request(Endpoint.CREATE_TWEET, {
+    body: JSON.stringify({
+      queryId: EndpointQuery.CREATE_TWEET,
+      variables,
+      features: FEATURES,
+    }),
   })
-  return data
 }
 
 export async function deleteTweet(tweetId: string) {
-  const body = {
-    variables: {
-      tweet_id: tweetId,
-      dark_request: false,
-    },
-    queryId: EndpointQuery.DELETE_TWEET,
-  }
   return request(Endpoint.DELETE_TWEET, {
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      variables: {
+        tweet_id: tweetId,
+        dark_request: false,
+      },
+      queryId: EndpointQuery.DELETE_TWEET,
+    }),
   })
 }
 
-const pageSize = 100
-
-function buildUrl(url: string, cursor?: string) {
-  const [_, query] = url.split('?')
-  const variables = {
-    cursor: '',
-    count: pageSize,
-    includePromotedContent: true,
-  }
-  if (cursor) {
-    variables.cursor = cursor
-  }
-  return `${Endpoint.LIST_BOOKMARKS}?variables=${query}`
-}
-
-export async function getBookmarks(cursor?: string, folderId?: string) {
+export async function getBookmarks(cursor?: string) {
   try {
     const variables = {
       cursor: '',
@@ -111,24 +139,11 @@ export async function getBookmarks(cursor?: string, folderId?: string) {
     if (cursor) {
       variables.cursor = cursor
     }
-    const url = `${Endpoint.LIST_BOOKMARKS}?variables=${encodeURIComponent(JSON.stringify(variables))}&features={"graphql_timeline_v2_bookmark_timeline":true,"rweb_tipjar_consumption_enabled":true,"responsive_web_graphql_exclude_directive_enabled":true,"verified_phone_label_enabled":false,"creator_subscriptions_tweet_preview_api_enabled":true,"responsive_web_graphql_timeline_navigation_enabled":true,"responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,"communities_web_enable_tweet_community_results_fetch":true,"c9s_tweet_anatomy_moderator_badge_enabled":true,"articles_preview_enabled":true,"tweetypie_unmention_optimization_enabled":true,"responsive_web_edit_tweet_api_enabled":true,"graphql_is_translatable_rweb_tweet_is_translatable_enabled":true,"view_counts_everywhere_api_enabled":true,"longform_notetweets_consumption_enabled":true,"responsive_web_twitter_article_tweet_consumption_enabled":true,"tweet_awards_web_tipping_enabled":false,"creator_subscriptions_quote_tweet_preview_enabled":false,"freedom_of_speech_not_reach_fetch_enabled":true,"standardized_nudges_misinfo":true,"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled":true,"rweb_video_timestamps_enabled":true,"longform_notetweets_rich_text_read_enabled":true,"longform_notetweets_inline_media_enabled":true,"responsive_web_enhance_cards_enabled":false}`
-    const res = await fetchWithTimeout(url, {
+    const query = `variables=${encodeURIComponent(JSON.stringify(variables))}&features=${encodeURIComponent(JSON.stringify(BOOKMARK_FEATURES))}`
+    const json = (await request(`${Endpoint.LIST_BOOKMARKS}?${query}`, {
       body: null,
       method: 'GET',
-    })
-    const json = (await res.json()) as BookmarksResponse
-
-    if ('errors' in json) {
-      const t = res.headers.get('X-Rate-Limit-Reset')
-      const leftTime = t
-        ? Math.ceil((parseInt(t) * 1000 - Date.now()) / 60000)
-        : 10
-      const error = new Error(
-        `Server error occurred, retry after ${leftTime} minutes.`,
-      )
-      error.name = FetchError.DataError
-      throw error
-    }
+    })) as BookmarksResponse
 
     return json
   } catch (e) {

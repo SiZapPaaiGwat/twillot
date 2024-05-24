@@ -1,74 +1,14 @@
 import { addRecords, toRecord, getTweetId, getRecord } from './db/tweets'
 import {
-  Header,
-  Host,
   TimelineEntry,
   TimelineTimelineItem,
   TimelineTweet,
   TimelineAddEntriesInstruction,
 } from '../types'
-import { BookmarksResponse } from '../types'
 import { addLocalItem, getLocalItem } from './browser'
-import xfetch, { FetchError } from './xfetch'
-import { Endpoint } from './api/twitter'
+import { getBookmarks } from './api/twitter'
 
-const pageSize = 100
-
-function buildUrl(url: string, cursor?: string) {
-  const [_, query] = url.split('?')
-  const variables = {
-    cursor: '',
-    count: pageSize,
-    includePromotedContent: true,
-  }
-  if (cursor) {
-    variables.cursor = cursor
-  }
-  return `${Endpoint.LIST_BOOKMARKS}?variables=${encodeURIComponent(JSON.stringify(variables))}${query}`
-}
-
-async function getBookmarks(headers: Header, cursor?: string) {
-  try {
-    const res = await xfetch(`${buildUrl(headers.url, cursor)}`, {
-      headers: {
-        accept: '*/*',
-        'accept-language': 'en-US,en;q=0.9',
-        authorization: headers.token,
-        'content-type': 'application/json',
-        'x-csrf-token': headers.csrf,
-        'x-twitter-active-user': 'yes',
-        'x-twitter-auth-type': 'OAuth2Session',
-        'x-twitter-client-language': 'en-us',
-        cookie: headers.cookie,
-        Referer: `${Host}/i/bookmarks`,
-      },
-      body: null,
-      method: 'GET',
-    })
-    const json = (await res.json()) as BookmarksResponse
-
-    if ('errors' in json) {
-      const t = res.headers.get('X-Rate-Limit-Reset')
-      const leftTime = t
-        ? Math.ceil((parseInt(t) * 1000 - Date.now()) / 60000)
-        : 10
-      const error = new Error(
-        `Server error occurred, retry after ${leftTime} minutes.`,
-      )
-      error.name = FetchError.DataError
-      throw error
-    }
-    return json
-  } catch (e) {
-    if (e.name !== FetchError.TimeoutError && e.name !== FetchError.DataError) {
-      e.name = FetchError.IdentityError
-    }
-
-    throw e
-  }
-}
-
-export async function* syncAllBookmarks(headers: Header, forceSync = false) {
+export async function* syncAllBookmarks(forceSync = false) {
   /**
    * 仅针对全量同步记录 cursor 到本地
    */
@@ -76,7 +16,7 @@ export async function* syncAllBookmarks(headers: Header, forceSync = false) {
     ? await getLocalItem('bookmark_cursor')
     : undefined
   while (true) {
-    const json = await getBookmarks(headers, cursor)
+    const json = await getBookmarks(cursor)
     const instruction =
       json.data.bookmark_timeline_v2.timeline.instructions?.find(
         (i) => i.type === 'TimelineAddEntries',

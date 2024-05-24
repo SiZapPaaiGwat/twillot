@@ -72,7 +72,7 @@ export async function initSync(keyword = '') {
        * 全量同步时展示最新的 100 条数据
        * 后续更新只更新总数
        */
-      for await (const docs of syncAllBookmarks(auth as Header, true)) {
+      for await (const docs of syncAllBookmarks(true)) {
         /**
          * 已经有最新的数据展示，不对数据进行操作
          */
@@ -95,7 +95,7 @@ export async function initSync(keyword = '') {
        * 后续更新同时更新总数和展示数据
        */
       setStore('isAutoSyncing', true)
-      for await (const docs of syncAllBookmarks(auth as Header)) {
+      for await (const docs of syncAllBookmarks()) {
         setStore('totalCount', await countRecords())
         /**
          * 当前正在搜索时不更新数据
