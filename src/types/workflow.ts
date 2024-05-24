@@ -6,12 +6,14 @@ export enum EndpointQuery {
   LIST_BOOKMARKS = 'UyNF_BgJ5d5MbtuVukyl7A',
   CREATE_TWEET = 'BTWYQFqX-WbKZOhykzDpRg',
   DELETE_TWEET = 'VaenaVgh5q5ih7kvyVjgtg',
+  TWEET_DETAIL = 'bFUhQzgl9zjo-teD0pAQZw',
 }
 
 export enum Endpoint {
   LIST_BOOKMARKS = `${BASE_PATH}${EndpointQuery.LIST_BOOKMARKS}/Bookmarks`,
   CREATE_TWEET = `${BASE_PATH}${EndpointQuery.CREATE_TWEET}/CreateTweet`,
   DELETE_TWEET = `${BASE_PATH}${EndpointQuery.DELETE_TWEET}/DeleteTweet`,
+  TWEET_DETAIL = `${BASE_PATH}${EndpointQuery.TWEET_DETAIL}/TweetDetail`,
 }
 
 export enum TriggerTypes {
