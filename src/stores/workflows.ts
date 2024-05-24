@@ -1,4 +1,7 @@
+import { unwrap } from 'solid-js/store'
+import { readConfig, upsertConfig } from '../libs/db/configs'
 import dataStore, { mutateStore } from '../options/store'
+import { OptionName } from '../types'
 
 export enum WhenAction {
   bookmark = 'bookmark',
@@ -43,6 +46,9 @@ export const getUnusedThen = (currentThens: ThenAction[]) => {
   return unusedThens.length > 0 ? unusedThens[0] : ThenAction.translate
 }
 
+/**
+ * 仅更新 store 中的数据，不更新数据库
+ */
 export const addWorkflow = () => {
   const newWorkflow: Workflow = {
     id: Date.now().toString(16),
@@ -54,9 +60,56 @@ export const addWorkflow = () => {
   })
 }
 
-export const removeWorkflow = (index: number) => {
+/**
+ * 保存到数据库，仅更新一条记录
+ */
+export const saveWorkflow = async (index: number) => {
+  const workflow = unwrap(store.workflows[index])
+  const dbRecords = await readConfig(OptionName.WORKFLOW)
+  // 如果数据库中没有记录，则直接插入
+  if (!dbRecords) {
+    await upsertConfig({
+      option_name: OptionName.WORKFLOW,
+      option_value: [workflow],
+    })
+    return
+  }
+
+  const records = dbRecords.option_value as Workflow[]
+  const posIndex = records.findIndex((w) => w.id === workflow.id)
+
+  if (posIndex > -1) {
+    records[posIndex] = workflow
+  } else {
+    records.unshift(workflow)
+  }
+
+  await upsertConfig({
+    option_name: OptionName.WORKFLOW,
+    option_value: records,
+  })
+}
+
+export const getWorkflows = async () => {
+  const dbRecords = await readConfig(OptionName.WORKFLOW)
+  mutateStore((state) => {
+    state.workflows = (dbRecords?.option_value || []) as Workflow[]
+  })
+}
+
+export const removeWorkflow = async (index: number) => {
+  const id = store.workflows[index].id
+  const dbRecords = await readConfig(OptionName.WORKFLOW)
+  const dbWorkflows = (dbRecords?.option_value || []) as Workflow[]
+  const isDbItem = dbWorkflows.some((w) => w.id === id)
   mutateStore((state) => {
     state.workflows.splice(index, 1)
+    if (isDbItem) {
+      upsertConfig({
+        option_name: OptionName.WORKFLOW,
+        option_value: unwrap(state.workflows),
+      })
+    }
   })
 }
 

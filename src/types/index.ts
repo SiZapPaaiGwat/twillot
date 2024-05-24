@@ -30,6 +30,7 @@ export interface FontSet {
 export enum OptionName {
   FOLDER = 'folder',
   RULE = 'rule',
+  WORKFLOW = 'workflow',
 }
 
 export interface Config {
