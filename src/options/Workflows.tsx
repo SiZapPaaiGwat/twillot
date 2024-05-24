@@ -13,12 +13,16 @@ import {
   updateWhen,
 } from '../stores/workflows'
 import { Action, ActionNames, Trigger, TriggerNames } from '../types/workflow'
+import { sendWorkflows } from '../libs/browser'
 
 const [store] = dataStore
 
 const WorkflowConfigurator = () => {
-  onMount(() => {
-    getWorkflows()
+  /**
+   * 每次加载时将本地存储的工作流发送到 background
+   */
+  onMount(async () => {
+    sendWorkflows(await getWorkflows())
   })
 
   return (

@@ -10,7 +10,12 @@ import {
   Workflow,
 } from '../types/workflow'
 import { getTweet } from './api/twitter'
-import { getRequestBody } from './browser'
+import { getRequestBody, getWorkflows, startWorkflowListening } from './browser'
+
+const simpleTriggers =
+  'CreateRetweet CreateNoteTweet CreateScheduledTweet CreateBookmark DeleteBookmark FavoriteTweet'.split(
+    ' ',
+  )
 
 class TriggerMonitor {
   requestBody = { variables: null as any, features: null as any }
@@ -20,14 +25,12 @@ class TriggerMonitor {
 
   /**
    * 获取所有的工作流
+   * 1) 第一次启动时，从本地存储中获取所有的工作流
+   * 2) 监听 chrome.runtime.onMessage 事件，获取新的工作流, 并更新本地存储
    */
-  init() {
-    chrome.runtime.sendMessage({ type: 'get_workflows' })
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === 'get_workflows') {
-        this.workflows = message.data as Workflow[]
-      }
-    })
+  async init() {
+    this.workflows = await getWorkflows()
+    startWorkflowListening()
   }
 
   register(action: Action, fn: ActionHandler) {
@@ -45,10 +48,6 @@ class TriggerMonitor {
 
   getName() {
     const url = this.url
-    const simpleTriggers =
-      'CreateRetweet CreateNoteTweet CreateScheduledTweet CreateBookmark DeleteBookmark FavoriteTweet'.split(
-        ' ',
-      )
     const triggerName = simpleTriggers.find((t) => url.endsWith(`/${t}`))
     if (triggerName) {
       return triggerName
@@ -97,6 +96,7 @@ class TriggerMonitor {
 const monitor = new TriggerMonitor()
 monitor.init()
 monitor.register(ActionTypes.translate, async (context: ActionContext) => {
+  console.log('translate', context)
   return context.prevResponse ? context.prevResponse + 1 : 1
 })
 

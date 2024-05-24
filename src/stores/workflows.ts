@@ -81,9 +81,11 @@ export const saveWorkflow = async (index: number) => {
 
 export const getWorkflows = async () => {
   const dbRecords = await readConfig(OptionName.WORKFLOW)
+  const workflows = (dbRecords?.option_value || []) as Workflow[]
   mutateStore((state) => {
-    state.workflows = (dbRecords?.option_value || []) as Workflow[]
+    state.workflows = workflows
   })
+  return workflows
 }
 
 export const removeWorkflow = async (index: number) => {

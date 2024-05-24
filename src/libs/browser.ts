@@ -36,6 +36,31 @@ export function startTriggerListening() {
 }
 
 /**
+ * @bg
+ */
+export function startWorkflowListening() {
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.type === 'get_workflows') {
+      const workflows = message.data as Workflow[]
+      if (!workflows || workflows.length === 0) {
+        return
+      }
+
+      chrome.storage.local.set({ workflows })
+      monitor.workflows = workflows
+    }
+  })
+}
+
+/**
+ * @bg
+ */
+export async function getWorkflows() {
+  const item = await chrome.storage.local.get('workflows')
+  return item.workflows || []
+}
+
+/**
  * @options
  */
 export function sendWorkflows(workflows: Workflow[]) {
