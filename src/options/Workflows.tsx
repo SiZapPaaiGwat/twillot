@@ -9,11 +9,10 @@ import {
   removeThen,
   removeWorkflow,
   saveWorkflow,
-  ThenAction,
   updateThen,
   updateWhen,
-  WhenAction,
 } from '../stores/workflows'
+import { Action, ActionNames, Trigger, TriggerNames } from '../types/workflow'
 
 const [store] = dataStore
 
@@ -66,15 +65,19 @@ const WorkflowConfigurator = () => {
                     onInput={(e) =>
                       updateWhen(
                         workflowIndex(),
-                        e.currentTarget.value as WhenAction,
+                        e.currentTarget.value as Trigger,
                       )
                     }
                   >
-                    {Object.values(WhenAction).map((action) => (
-                      <option value={action}>{action}</option>
+                    {Object.keys(TriggerNames).map((trigger) => (
+                      <option
+                        value={trigger}
+                        selected={trigger === workflow.when}
+                      >
+                        {TriggerNames[trigger]}
+                      </option>
                     ))}
                   </select>
-                  <div class="mt-4 text-center">a tweet</div>
                 </div>
               </div>
 
@@ -105,20 +108,19 @@ const WorkflowConfigurator = () => {
                             updateThen(
                               workflowIndex(),
                               thenIndex(),
-                              e.currentTarget.value as ThenAction,
+                              e.currentTarget.value as Action,
                             )
                           }
                         >
-                          {Object.values(ThenAction).map((action) => (
+                          {Object.keys(ActionNames).map((action) => (
                             <option
                               value={action}
                               selected={action === thenAction}
                             >
-                              {action}
+                              {ActionNames[action]}
                             </option>
                           ))}
                         </select>
-                        <div class="mt-4 text-center">this tweet</div>
                       </div>
                     </div>
                   </>

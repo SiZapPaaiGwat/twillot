@@ -1,9 +1,10 @@
-import { BookmarksResponse, Host } from '../../types'
+import { BookmarksResponse } from '../../types'
+import { Endpoint, EndpointQuery } from '../../types/workflow'
 import { getAuthInfo } from '../browser'
 import fetchWithTimeout, { FetchError } from '../xfetch'
 
 const pageSize = 100
-const BASE_PATH = `${Host}/i/api/graphql/`
+
 const COMMON_FEATURES = {
   creator_subscriptions_tweet_preview_api_enabled: true,
   c9s_tweet_anatomy_moderator_badge_enabled: true,
@@ -37,18 +38,6 @@ const BOOKMARK_FEATURES = {
   communities_web_enable_tweet_community_results_fetch: true,
   articles_preview_enabled: true,
   creator_subscriptions_quote_tweet_preview_enabled: false,
-}
-
-enum EndpointQuery {
-  LIST_BOOKMARKS = 'UyNF_BgJ5d5MbtuVukyl7A',
-  CREATE_TWEET = 'BTWYQFqX-WbKZOhykzDpRg',
-  DELETE_TWEET = 'VaenaVgh5q5ih7kvyVjgtg',
-}
-
-export enum Endpoint {
-  LIST_BOOKMARKS = `${BASE_PATH}${EndpointQuery.LIST_BOOKMARKS}/Bookmarks`,
-  CREATE_TWEET = `${BASE_PATH}${EndpointQuery.CREATE_TWEET}/CreateTweet`,
-  DELETE_TWEET = `${BASE_PATH}${EndpointQuery.DELETE_TWEET}/DeleteTweet`,
 }
 
 function get_headers(token: string, csrf: string) {

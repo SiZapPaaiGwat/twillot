@@ -2,48 +2,36 @@ import { unwrap } from 'solid-js/store'
 import { readConfig, upsertConfig } from '../libs/db/configs'
 import dataStore, { mutateStore } from '../options/store'
 import { OptionName } from '../types'
-
-export enum WhenAction {
-  bookmark = 'bookmark',
-  reply = 'reply',
-  retweet = 'retweet',
-  refer = 'refer',
-  like = 'like',
-}
-
-export enum ThenAction {
-  translate = 'Translate',
-  summarize = 'Summarize',
-  question = 'Question',
-  extend = 'Extend',
-  webhook = 'Send a webhook',
-}
-
-export interface Workflow {
-  id: string
-  when: WhenAction
-  thenList: ThenAction[]
-}
+import { sendWorkflows } from '../libs/browser'
+import {
+  Action,
+  ActionNames,
+  Trigger,
+  TriggerNames,
+  Workflow,
+} from '../types/workflow'
 
 const [store] = dataStore
 
 export const getUnusedWhen = () => {
   const usedWhens = new Set(store.workflows.map((w) => w.when))
-  const unusedWhens = Object.values(WhenAction).filter(
+  const unusedWhens = Object.keys(TriggerNames).filter(
     (action) => !usedWhens.has(action),
   )
-  return unusedWhens.length > 0 ? unusedWhens[0] : WhenAction.bookmark
+  return (unusedWhens.length > 0 ? unusedWhens[0] : 'CreateBookmark') as Trigger
 }
 
-export const getUsedThens = (currentThens: ThenAction[]) => {
+export const getUsedThens = (currentThens: Action[]) => {
   return new Set(currentThens)
 }
 
-export const getUnusedThen = (currentThens: ThenAction[]) => {
+export const getUnusedThen = (currentThens: Action[]) => {
   const usedThens = getUsedThens(currentThens)
-  const allThens = Object.values(ThenAction)
-  const unusedThens = allThens.filter((action) => !usedThens.has(action))
-  return unusedThens.length > 0 ? unusedThens[0] : ThenAction.translate
+  const allThens = Object.keys(ActionNames)
+  const unusedThens = allThens.filter(
+    (action) => !usedThens.has(action as Action),
+  )
+  return (unusedThens.length > 0 ? unusedThens[0] : 'translate') as Action
 }
 
 /**
@@ -53,7 +41,7 @@ export const addWorkflow = () => {
   const newWorkflow: Workflow = {
     id: Date.now().toString(16),
     when: getUnusedWhen(),
-    thenList: [ThenAction.translate],
+    thenList: ['translate'],
   }
   mutateStore((state) => {
     state.workflows.unshift(newWorkflow)
@@ -66,28 +54,29 @@ export const addWorkflow = () => {
 export const saveWorkflow = async (index: number) => {
   const workflow = unwrap(store.workflows[index])
   const dbRecords = await readConfig(OptionName.WORKFLOW)
+  let workflows = []
   // 如果数据库中没有记录，则直接插入
   if (!dbRecords) {
-    await upsertConfig({
-      option_name: OptionName.WORKFLOW,
-      option_value: [workflow],
-    })
-    return
-  }
-
-  const records = dbRecords.option_value as Workflow[]
-  const posIndex = records.findIndex((w) => w.id === workflow.id)
-
-  if (posIndex > -1) {
-    records[posIndex] = workflow
+    workflows.push(workflow)
   } else {
-    records.unshift(workflow)
+    workflows = dbRecords.option_value as Workflow[]
+    const posIndex = workflows.findIndex((w) => w.id === workflow.id)
+    if (posIndex > -1) {
+      workflows[posIndex] = workflow
+    } else {
+      workflows.unshift(workflow)
+    }
   }
-
   await upsertConfig({
     option_name: OptionName.WORKFLOW,
-    option_value: records,
+    option_value: workflows,
   })
+
+  console.log('Workflow saved to database', workflows)
+  sendWorkflows(
+    workflows,
+    // workflows.map((w) => ({ when: w.when, thenList: w.thenList, id: w.id })),
+  )
 }
 
 export const getWorkflows = async () => {
@@ -115,7 +104,7 @@ export const removeWorkflow = async (index: number) => {
 
 export const addThen = (index: number) => {
   const workflow = store.workflows[index]
-  if (workflow.thenList.length === Object.values(ThenAction).length) {
+  if (workflow.thenList.length === Object.keys(ActionNames).length) {
     console.warn('No action to add')
     return
   }
@@ -139,7 +128,7 @@ export const removeThen = (workflowIndex: number, thenIndex: number) => {
   })
 }
 
-export const updateWhen = (workflowIndex: number, newWhen: WhenAction) => {
+export const updateWhen = (workflowIndex: number, newWhen: Trigger) => {
   mutateStore((state) => {
     state.workflows[workflowIndex].when = newWhen
   })
@@ -148,7 +137,7 @@ export const updateWhen = (workflowIndex: number, newWhen: WhenAction) => {
 export const updateThen = (
   workflowIndex: number,
   thenIndex: number,
-  newThen: ThenAction,
+  newThen: Action,
 ) => {
   mutateStore((state) => {
     const index = state.workflows[workflowIndex].thenList.indexOf(newThen)

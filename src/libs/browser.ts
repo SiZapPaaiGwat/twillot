@@ -1,29 +1,52 @@
 import { Host, X_DOMAIN } from '../types'
+import { Workflow } from '../types/workflow'
+import TriggerMonitor from './workflow'
 
-export function onBookmarkCreated(callback: (tweeet_id: string) => void) {
+const triggerInstance = new TriggerMonitor()
+triggerInstance.init()
+
+export const getRequestBody = (
+  details: chrome.webRequest.WebRequestBodyDetails,
+) => {
+  const requestBody = details.requestBody
+  if (requestBody && requestBody.raw && requestBody.raw.length > 0) {
+    const decoder = new TextDecoder('utf-8')
+    const bodyString = decoder.decode(requestBody.raw[0].bytes)
+    try {
+      return JSON.parse(bodyString)
+    } catch (error) {
+      console.error('Error parsing request body:', error)
+    }
+  }
+}
+
+/**
+ * 开始监听用户的触发动作
+ * @bg
+ */
+export function startTriggerListening() {
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
-      if (
-        details.method === 'POST' &&
-        details.url.endsWith('/CreateBookmark')
-      ) {
-        const requestBody = details.requestBody
-        if (requestBody && requestBody.raw && requestBody.raw.length > 0) {
-          const decoder = new TextDecoder('utf-8')
-          const bodyString = decoder.decode(requestBody.raw[0].bytes)
-          try {
-            const bodyJson = JSON.parse(bodyString)
-            const tweetId = bodyJson.variables.tweet_id
-            callback(tweetId)
-          } catch (error) {
-            console.error('Error parsing request body:', error)
-          }
-        }
+      if (details.method !== 'POST') {
+        return
       }
+
+      triggerInstance.setup(details)
+      triggerInstance.emit()
     },
     { urls: [`${Host}/*`] },
     ['requestBody'],
   )
+}
+
+/**
+ * @options
+ */
+export function sendWorkflows(workflows: Workflow[]) {
+  chrome.runtime.sendMessage({
+    type: 'get_workflows',
+    data: workflows,
+  })
 }
 
 export function openNewTab(url: string, active = true) {
