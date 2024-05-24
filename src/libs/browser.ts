@@ -71,8 +71,7 @@ export async function onSendHeaders(
   }
 
   let csrf = '',
-    token = '',
-    bookmarkUrl = url.replace(/variables=[^&]+/, '')
+    token = ''
 
   for (const { name: t, value: o } of details.requestHeaders || []) {
     if (csrf && token) {
@@ -93,7 +92,6 @@ export async function onSendHeaders(
       cookie: cookiesStr,
       csrf,
       token,
-      url: bookmarkUrl,
     })
     // NOTE 加了这一句获取登录态不稳定，导致登录失败，暂时注释掉
     // chrome.webRequest.onSendHeaders.removeListener(onSendHeaders)
