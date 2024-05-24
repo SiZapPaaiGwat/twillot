@@ -16,7 +16,7 @@
     "noEmit": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "types": ["vite/client", "@testing-library/jest-dom"]
+    "types": ["vite/client", "@testing-library/jest-dom", "@types/chrome"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
