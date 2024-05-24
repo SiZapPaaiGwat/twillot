@@ -1,28 +1,5 @@
 import { Host, X_DOMAIN } from '../types'
 
-export async function proxyRequest(
-  method: string,
-  url: string,
-  headers: Record<string, string>,
-  body?: any,
-) {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
-  if (tabs.length === 0) {
-    console.error('No active tab found')
-    return
-  }
-
-  chrome.tabs.sendMessage(tabs[0].id!, {
-    type: 'PROXY_REQUEST',
-    data: {
-      method,
-      url,
-      headers,
-      body,
-    },
-  })
-}
-
 export function onBookmarkCreated(callback: (tweeet_id: string) => void) {
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
