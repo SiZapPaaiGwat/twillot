@@ -49,34 +49,6 @@ export function onBookmarkCreated(callback: (tweeet_id: string) => void) {
   )
 }
 
-export function onContentMessage() {
-  async function sendReuqest(
-    method: string,
-    url: string,
-    headers: Record<string, string>,
-    body?: any,
-  ) {
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: new Headers(headers),
-        body,
-      })
-      const json = await res.json()
-      console.log('Request successful:', json)
-    } catch (error) {
-      console.error('Request failed:', error)
-    }
-  }
-
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message.type === 'PROXY_REQUEST') {
-      const { method, url, headers, body } = message.data
-      sendReuqest(method, url, headers, body)
-    }
-  })
-}
-
 export function openNewTab(url: string, active = true) {
   return chrome.tabs.create({
     url,
