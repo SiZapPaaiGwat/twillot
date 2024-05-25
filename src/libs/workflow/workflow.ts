@@ -1,4 +1,4 @@
-import { Host, Tweet } from './index'
+import { Host } from '../../types/index'
 
 const BASE_PATH = `${Host}/i/api/graphql/`
 
@@ -63,7 +63,7 @@ export interface Workflow {
 }
 
 export interface ActionContext {
-  tweet: Tweet | null
+  triggerName: Trigger
   requestBody: any
   prevResponse: any
 }

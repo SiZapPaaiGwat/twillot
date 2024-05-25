@@ -9,7 +9,7 @@ import {
   Trigger,
   TriggerNames,
   Workflow,
-} from '../types/workflow'
+} from '../libs/workflow/workflow'
 
 const [store] = dataStore
 

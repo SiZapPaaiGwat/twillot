@@ -1,5 +1,5 @@
 import { BookmarksResponse } from '../../types'
-import { Endpoint, EndpointQuery } from '../../types/workflow'
+import { Endpoint, EndpointQuery } from '../workflow/workflow'
 import { getAuthInfo } from '../browser'
 import fetchWithTimeout, { FetchError } from '../xfetch'
 

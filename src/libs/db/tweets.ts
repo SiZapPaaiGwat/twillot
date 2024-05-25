@@ -305,9 +305,10 @@ function getTweetFields(tweet?: TweetUnion) {
 }
 
 export function toRecord(
-  record: TimelineEntry<TimelineTweet, TimelineTimelineItem<TimelineTweet>>,
+  record: TimelineTweet,
+  sortIndex: string,
 ): Tweet | null {
-  let tweet_base = getTweet(record.content.itemContent.tweet_results.result)
+  let tweet_base = getTweet(record.tweet_results.result)
   if (!tweet_base) {
     return null
   }
@@ -318,7 +319,7 @@ export function toRecord(
 
   return {
     ...fields,
-    sort_index: record.sortIndex,
+    sort_index: sortIndex,
     has_gif: !!media_items?.some((item) => item.type === 'animated_gif'),
     has_image: !!media_items?.some((item) => item.type === 'photo'),
     has_video: !!media_items?.some((item) => item.type === 'video'),

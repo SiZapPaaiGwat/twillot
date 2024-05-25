@@ -1,5 +1,5 @@
 import { Host, X_DOMAIN } from '../types'
-import { Workflow } from '../types/workflow'
+import { Workflow } from './workflow/workflow'
 import monitor from './workflow'
 
 export const getRequestBody = (
@@ -19,7 +19,7 @@ export const getRequestBody = (
 
 /**
  * 开始监听用户的触发动作
- * @bg
+ * @description bg only
  */
 export function startTriggerListening() {
   chrome.webRequest.onBeforeRequest.addListener(
@@ -36,8 +36,8 @@ export function startTriggerListening() {
 }
 
 /**
- * @bg
- */
+ * @description bg only
+ * */
 export function startWorkflowListening() {
   chrome.runtime.onMessage.addListener((message) => {
     if (message.type === 'get_workflows') {
@@ -53,7 +53,7 @@ export function startWorkflowListening() {
 }
 
 /**
- * @bg
+ * @description bg only
  */
 export async function getWorkflows() {
   const item = await chrome.storage.local.get('workflows')
@@ -61,13 +61,28 @@ export async function getWorkflows() {
 }
 
 /**
- * @options
+ * @description options only
  */
 export function sendWorkflows(workflows: Workflow[]) {
   chrome.runtime.sendMessage({
     type: 'get_workflows',
     data: workflows,
   })
+}
+
+export async function getIdsToSave(): Promise<string[]> {
+  const ids = await getLocalItem('idsToSave')
+  return ids || []
+}
+
+export async function setIdToSave(id: string) {
+  let ids = await getIdsToSave()
+  ids.push(id)
+  await addLocalItem('idsToSave', ids)
+}
+
+export function removeIdToSave() {
+  return chrome.storage.local.remove('idsToSave')
 }
 
 export function openNewTab(url: string, active = true) {
@@ -151,12 +166,11 @@ export async function getAuthInfo() {
   return auth
 }
 
-export async function addLocalItem(key: string, value: string) {
+export async function addLocalItem(key: string, value: string | string[]) {
   if (value && value.length > 0) {
     await chrome.storage.local.set({
       [key]: value,
     })
-    return value.trim()
   }
 }
 

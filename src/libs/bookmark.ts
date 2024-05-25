@@ -4,9 +4,10 @@ import {
   TimelineTimelineItem,
   TimelineTweet,
   TimelineAddEntriesInstruction,
+  TimelineTimelineModule,
 } from '../types'
-import { addLocalItem, getLocalItem } from './browser'
-import { getBookmarks } from './api/twitter'
+import { addLocalItem, getIdsToSave, getLocalItem } from './browser'
+import { getBookmarks, getTweet } from './api/twitter'
 
 export async function* syncAllBookmarks(forceSync = false) {
   /**
@@ -42,7 +43,9 @@ export async function* syncAllBookmarks(forceSync = false) {
         }
       }
 
-      const docs = tweets.map((i) => toRecord(i))
+      const docs = tweets.map((i) =>
+        toRecord(i.content.itemContent, i.sortIndex),
+      )
       await addRecords(docs)
       yield docs
     }
@@ -56,24 +59,19 @@ export async function* syncAllBookmarks(forceSync = false) {
       break
     }
   }
-}
 
-// export async function exportBookmarks(format: ExportFormatType) {
-//   let allTweets = await findRecords('', '', 1, 100000)
-//   const all = allTweets.map((i) => {
-//     return {
-//       username: i.username,
-//       url: `${Host}/${i.screen_name}/status/${i.tweet_id}`,
-//       content: i.full_text,
-//       media: i.media_items
-//         ? i.media_items.map((m) => m.media_url_https).join('\t')
-//         : [],
-//       media_count: i.media_items.length,
-//       contains_video: i.has_video,
-//     }
-//   })
-//   exportData(all, format, `twillot.${format.toLowerCase()}`)
-// }
+  const idsToSave = await getIdsToSave()
+  console.log('idsToSave', idsToSave)
+  for (let id of idsToSave) {
+    const dbItem = await getRecord(id)
+    const conversations = await getTweetConversations(id, '')
+    console.log('conversations', conversations)
+    if (conversations) {
+      dbItem.conversations = conversations
+      await addRecords([dbItem], true)
+    }
+  }
+}
 
 export async function isBookmarksSynced(
   tweets: TimelineEntry<TimelineTweet, TimelineTimelineItem<TimelineTweet>>[],
@@ -100,4 +98,53 @@ export async function isBookmarksSynced(
   }
 
   return false
+}
+
+/**
+ * 获取推文主题
+ * sortIndex 依赖与书签同步接口
+ */
+export async function getTweetConversations(
+  tweetId: string,
+  sortIndex: string,
+) {
+  const json = await getTweet(tweetId)
+  const wrapper =
+    json.data.threaded_conversation_with_injections_v2.instructions
+  const instructions = wrapper.find((i) => i.type === 'TimelineAddEntries') as
+    | TimelineAddEntriesInstruction
+    | undefined
+  if (!instructions) {
+    console.error('No instructions found in response')
+    return null
+  }
+
+  // 这是原推
+  let originalTweet = instructions.entries[0]
+  if (!originalTweet) {
+    console.error('Tweet not found in response')
+    return null
+  }
+
+  const conversations = []
+  // 主题回复只会在第一个？
+  let entry = instructions.entries[1] as TimelineEntry<
+    TimelineTweet,
+    TimelineTimelineModule<TimelineTweet>
+  > | null
+  if (!entry) {
+    return null
+  }
+
+  const items = entry.content.items.filter(
+    (i) =>
+      i.item.itemContent.itemType === 'TimelineTweet' &&
+      i.item.itemContent.tweetDisplayType === 'SelfThread',
+  )
+
+  for (const i of items) {
+    conversations.push(toRecord(i.item.itemContent, sortIndex))
+  }
+
+  return conversations
 }
