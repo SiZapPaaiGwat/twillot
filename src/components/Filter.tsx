@@ -3,9 +3,11 @@ import { createMemo, Show } from 'solid-js'
 import dataStore, { isFilterVisible } from '../options/store'
 import { IconBookmark, IconFolders, IconTrash } from './Icons'
 import { allCategories } from '../constants'
+import { useNavigate } from '@solidjs/router'
 
 export default function Filter() {
   const [store, setStore] = dataStore
+  const navigate = useNavigate()
   const category = createMemo(
     () => allCategories.find((c) => c.value === store.category)?.name,
   )
@@ -34,13 +36,14 @@ export default function Filter() {
           </button>
         </Show>
         <button
-          onClick={() =>
+          onClick={() => {
             setStore({
               category: '',
               folder: '',
               keyword: '',
             })
-          }
+            navigate('/')
+          }}
         >
           <IconTrash />
         </button>
