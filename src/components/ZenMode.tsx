@@ -1,4 +1,4 @@
-import { Show, createMemo, createSignal } from 'solid-js'
+import { For, Show, createMemo, createSignal } from 'solid-js'
 
 import { Content } from './Tweet'
 import dataStore from '../options/store'
@@ -60,7 +60,12 @@ export default function ZenMode() {
           </address>
         </header>
         <article class="mx-auto w-[40rem] flex-1">
-          <Content tweet={tweet}></Content>
+          <Content tweet={tweet()} />
+          <Show when={tweet().conversations}>
+            <For each={tweet().conversations}>
+              {(conversation) => <Content tweet={conversation} />}
+            </For>
+          </Show>
           <Show when={tweet().quoted_tweet}>
             <div class="relative inline-flex w-full items-center justify-center">
               <hr class="my-8 h-1 w-64 rounded border-0 bg-gray-200 dark:bg-gray-700" />
