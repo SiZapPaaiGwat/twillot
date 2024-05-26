@@ -66,6 +66,7 @@ export async function* syncAllBookmarks(forceSync = false) {
   }
 
   const idsToSave = await getIdsToSave()
+  console.log('idsToSave', idsToSave)
   for (let id of idsToSave) {
     const dbItem = await getRecord(id)
     const conversations = await getTweetConversations(id, '')

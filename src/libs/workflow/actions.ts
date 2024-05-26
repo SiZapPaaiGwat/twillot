@@ -8,6 +8,7 @@ export default {
    */
   saveTweetId: async (context: ActionContext) => {
     const { requestBody, triggerName } = context
+    console.log('save_thread: triggerName:', triggerName, requestBody)
     let tweet_id = ''
     if (triggerName === 'CreateBookmark') {
       tweet_id = requestBody.variables.tweet_id
