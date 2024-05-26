@@ -13,6 +13,7 @@ import {
   removeIdToSave,
 } from './browser'
 import { getBookmarks, getTweet } from './api/twitter'
+import { mutateStore } from '../options/store'
 
 export async function* syncAllBookmarks(forceSync = false) {
   /**
@@ -73,10 +74,16 @@ export async function* syncAllBookmarks(forceSync = false) {
     if (conversations) {
       dbItem.conversations = conversations
       await addRecords([dbItem], true)
-      // TODO update store
+      mutateStore((state) => {
+        const index = state.tweets.findIndex((t) => t.tweet_id === id)
+        if (index > -1) {
+          state.tweets[index].conversations = conversations
+        }
+      })
     }
     await removeIdToSave(id)
   }
+  console.log('Left idsToSave', await getIdsToSave())
 }
 
 export async function isBookmarksSynced(
