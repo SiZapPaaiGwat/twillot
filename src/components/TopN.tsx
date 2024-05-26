@@ -55,6 +55,7 @@ function TopN(props) {
 
           return (
             <div
+              // @ts-ignore
               use:tooltip="top"
               class="absolute cursor-pointer overflow-hidden rounded-full border-2 border-[rgba(0,0,0,0.25)] dark:border-gray-400"
               title={`You bookmarked ${user.username} ${user.count} times`}

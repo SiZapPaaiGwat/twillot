@@ -5,10 +5,11 @@ import {
   TimelineTimelineModule,
   TimelineTweet,
 } from '../../types'
-import { Endpoint, EndpointQuery } from '../workflow/types'
 import { getAuthInfo } from '../browser'
 import fetchWithTimeout, { FetchError } from '../xfetch'
 import { toRecord } from '../db/tweets'
+import { Endpoint } from '../workflow'
+import { EndpointQuery } from '../workflow'
 
 const pageSize = 100
 
@@ -153,6 +154,17 @@ export async function deleteTweet(tweetId: string) {
         dark_request: false,
       },
       queryId: EndpointQuery.DELETE_TWEET,
+    }),
+  })
+}
+
+export async function deleteBookmark(tweetId: string) {
+  return request(Endpoint.DELETE_BOOKMARK, {
+    body: JSON.stringify({
+      variables: {
+        tweet_id: tweetId,
+      },
+      queryId: EndpointQuery.DELETE_BOOKMARK,
     }),
   })
 }

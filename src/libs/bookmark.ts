@@ -7,7 +7,7 @@ import {
 } from '../types'
 import { addLocalItem, getLocalItem } from './browser'
 import { getBookmarks } from './api/twitter'
-import { executeAllTasks } from './workflow/task'
+import { executeAllTasks } from './workflow/store'
 
 export async function* syncAllBookmarks(forceSync = false) {
   /**

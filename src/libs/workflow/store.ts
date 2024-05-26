@@ -1,15 +1,14 @@
 import { unwrap } from 'solid-js/store'
-import { readConfig, upsertConfig } from '../libs/db/configs'
-import dataStore, { mutateStore } from '../options/store'
-import { OptionName } from '../types'
-import { sendWorkflows } from '../libs/browser'
-import {
-  Action,
-  ActionNames,
-  Trigger,
-  TriggerNames,
-  Workflow,
-} from '../libs/workflow/types'
+
+import { readConfig, upsertConfig } from '../../libs/db/configs'
+import dataStore, { mutateStore } from '../../options/store'
+import { OptionName } from '../../types'
+import { Trigger, TriggerNames } from '../../libs/workflow/triggers'
+import { Action, ActionNames } from '../../libs/workflow/actions'
+import { Workflow, sendWorkflows } from '../../libs/workflow'
+import { getTweetConversations } from '../api/twitter'
+import { addRecords, countRecords, deleteRecord, getRecord } from '../db/tweets'
+import { getTasks, removeTask } from './task'
 
 const [store] = dataStore
 
@@ -27,7 +26,7 @@ export const getUsedThens = (currentThens: Action[]) => {
 
 export const getUnusedThen = (currentThens: Action[]) => {
   const usedThens = getUsedThens(currentThens)
-  const allThens = Object.keys(ActionNames)
+  const allThens = Object.values(Action)
   const unusedThens = allThens.filter(
     (action) => !usedThens.has(action as Action),
   )
@@ -41,7 +40,7 @@ export const addWorkflow = () => {
   const newWorkflow: Workflow = {
     id: Date.now().toString(16),
     when: getUnusedWhen(),
-    thenList: ['translate'],
+    thenList: [],
   }
   mutateStore((state) => {
     state.workflows.unshift(newWorkflow)
@@ -73,10 +72,7 @@ export const saveWorkflow = async (index: number) => {
   })
 
   console.log('Workflow saved to database', workflows)
-  sendWorkflows(
-    workflows,
-    // workflows.map((w) => ({ when: w.when, thenList: w.thenList, id: w.id })),
-  )
+  sendWorkflows(workflows)
 }
 
 export const getWorkflows = async () => {
@@ -148,4 +144,47 @@ export const updateThen = (
       state.workflows[workflowIndex].thenList.splice(index, 1)
     }
   })
+}
+
+export async function executeAllTasks() {
+  const tasks = await getTasks()
+  for (const task of tasks) {
+    console.log('execute task', task)
+    /**
+     * 自动同步 threads
+     */
+    if (task.name === Action.UnrollThread) {
+      const dbItem = await getRecord(task.tweetId)
+      const conversations = await getTweetConversations(task.tweetId)
+      if (conversations) {
+        dbItem.conversations = conversations
+        await addRecords([dbItem], true)
+        mutateStore((state) => {
+          const index = state.tweets.findIndex(
+            (t) => t.tweet_id === task.tweetId,
+          )
+          if (index > -1) {
+            state.tweets[index].conversations = conversations
+          }
+        })
+      }
+    } else if (task.name === Action.DeleteBookmark) {
+      const record = await deleteRecord(task.tweetId)
+      const totalCount = await countRecords()
+      mutateStore((state) => {
+        const index = state.tweets.findIndex((t) => t.tweet_id === task.tweetId)
+        if (index > -1) {
+          state.tweets.splice(index, 1)
+        }
+        if (record.folder) {
+          state.folders[record.folder] -= 1
+        }
+        state.totalCount = totalCount
+        state.selectedTweet = -1
+      })
+    } else {
+      console.error(`task ${task.name} not supported`)
+    }
+    await removeTask(task.id)
+  }
 }

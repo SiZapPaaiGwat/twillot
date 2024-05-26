@@ -2,19 +2,10 @@
  * This module is for backgrounded workflow processing.
  */
 
-import {
-  type Action,
-  ActionContext,
-  ActionHandler,
-  ActionTypes,
-  Workflow,
-} from './types'
-import { getTweet } from '../api/twitter'
-import {
-  getRequestBody,
-  getWorkflows,
-  startWorkflowListening,
-} from '../browser'
+import { Workflow } from '.'
+import { getRequestBody } from '../browser'
+import { Action, ActionHandler } from './actions'
+import { getWorkflows, startWorkflowListening } from './bg'
 
 const simpleTriggers =
   'CreateRetweet CreateNoteTweet CreateScheduledTweet CreateBookmark DeleteBookmark FavoriteTweet'.split(
@@ -34,7 +25,7 @@ class TriggerMonitor {
    */
   async init() {
     this.workflows = await getWorkflows()
-    startWorkflowListening()
+    startWorkflowListening(this)
   }
 
   register(action: Action, fn: ActionHandler) {
@@ -73,14 +64,9 @@ class TriggerMonitor {
   async emit() {
     const triggerName = this.getName()
     if (triggerName) {
-      let tweet = null
-      if (triggerName === 'CreateBookmark') {
-        tweet = await getTweet(this.requestBody.variables.tweet_id)
-      }
       const actions = this.workflows.filter((w) => w.when === triggerName)
       actions.forEach(async (w) => {
         const context = {
-          tweet,
           requestBody: this.requestBody,
           prevResponse: null,
         }
@@ -97,15 +83,4 @@ class TriggerMonitor {
   }
 }
 
-const monitor = new TriggerMonitor()
-monitor.init()
-monitor.register(ActionTypes.translate, async (context: ActionContext) => {
-  console.log('translate', context)
-  return context.prevResponse ? context.prevResponse + 1 : 1
-})
-
-monitor.register(ActionTypes.summarize, async (context: ActionContext) => {
-  return context.prevResponse ? context.prevResponse + 2 : 1
-})
-
-export default monitor
+export default TriggerMonitor

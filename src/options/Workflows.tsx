@@ -11,14 +11,10 @@ import {
   saveWorkflow,
   updateThen,
   updateWhen,
-} from '../stores/workflows'
-import {
-  Action,
-  ActionNames,
-  Trigger,
-  TriggerNames,
-} from '../libs/workflow/types'
-import { sendWorkflows } from '../libs/browser'
+} from '../libs/workflow/store'
+import { sendWorkflows } from '../libs/workflow'
+import { Trigger, TriggerNames } from '../libs/workflow/triggers'
+import { Action, ActionNames } from '../libs/workflow/actions'
 
 const [store] = dataStore
 
@@ -117,11 +113,11 @@ const WorkflowConfigurator = () => {
                             updateThen(
                               workflowIndex(),
                               thenIndex(),
-                              e.currentTarget.value as Action,
+                              parseInt(e.currentTarget.value) as Action,
                             )
                           }
                         >
-                          {Object.keys(ActionNames).map((action) => (
+                          {Object.values(Action).map((action) => (
                             <option
                               value={action}
                               selected={action === thenAction}

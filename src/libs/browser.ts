@@ -1,6 +1,4 @@
 import { Host, X_DOMAIN } from '../types'
-import { Workflow } from './workflow/types'
-import monitor from './workflow'
 
 export const getRequestBody = (
   details: chrome.webRequest.WebRequestBodyDetails,
@@ -15,59 +13,6 @@ export const getRequestBody = (
       console.error('Error parsing request body:', error)
     }
   }
-}
-
-/**
- * 开始监听用户的触发动作
- * @description bg only
- */
-export function startTriggerListening() {
-  chrome.webRequest.onBeforeRequest.addListener(
-    (details) => {
-      if (details.method !== 'POST') {
-        return
-      }
-
-      monitor.setup(details)
-    },
-    { urls: [`${Host}/*`] },
-    ['requestBody'],
-  )
-}
-
-/**
- * @description bg only
- * */
-export function startWorkflowListening() {
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message.type === 'get_workflows') {
-      const workflows = message.data as Workflow[]
-      if (!workflows || workflows.length === 0) {
-        return
-      }
-
-      chrome.storage.local.set({ workflows })
-      monitor.workflows = workflows
-    }
-  })
-}
-
-/**
- * @description bg only
- */
-export async function getWorkflows() {
-  const item = await chrome.storage.local.get('workflows')
-  return item.workflows || []
-}
-
-/**
- * @description options only
- */
-export function sendWorkflows(workflows: Workflow[]) {
-  chrome.runtime.sendMessage({
-    type: 'get_workflows',
-    data: workflows,
-  })
 }
 
 export function openNewTab(url: string, active = true) {

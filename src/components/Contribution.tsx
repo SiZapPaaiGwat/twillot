@@ -48,6 +48,7 @@ export default function Contribution() {
               const disabled = color === disabledColor
               return (
                 <li
+                  // @ts-ignore
                   use:tooltip="top"
                   title={`${cell.count} bookmarks on ${cell.date}`}
                   style={{
