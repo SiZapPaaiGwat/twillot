@@ -8,7 +8,7 @@ import {
   type CountInfo,
 } from '../types'
 import { DAYS } from '../libs/date'
-import { Workflow } from '../stores/workflows'
+import { Workflow } from '../libs/workflow/workflow'
 
 const activeFont = JSON.parse(
   localStorage.getItem('activeFont') || 'null',
@@ -37,7 +37,6 @@ const store = createStore({
   isAutoSyncing: false,
   isForceSyncing: false,
   isForceSyncTimedout: false,
-  memApiKey: '',
   timeline: new Array<TweetWithPosition>(),
   activeFont,
   fontSize,

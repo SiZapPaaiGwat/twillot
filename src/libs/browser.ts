@@ -70,23 +70,6 @@ export function sendWorkflows(workflows: Workflow[]) {
   })
 }
 
-export async function getIdsToSave(): Promise<string[]> {
-  const ids = await getLocalItem('idsToSave')
-  return ids || []
-}
-
-export async function setIdToSave(id: string) {
-  let ids = await getIdsToSave()
-  ids.push(id)
-  await addLocalItem('idsToSave', ids)
-}
-
-export async function removeIdToSave(id: string) {
-  const ids = await getIdsToSave()
-  ids.splice(ids.indexOf(id), 1)
-  await chrome.storage.local.set({ idsToSave: ids })
-}
-
 export function openNewTab(url: string, active = true) {
   return chrome.tabs.create({
     url,
