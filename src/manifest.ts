@@ -31,7 +31,7 @@ export default defineManifest({
   },
   content_scripts: [
     {
-      matches: ['http://twitter.com/*', 'https://x.com/*'],
+      matches: ['https://twitter.com/*', 'https://x.com/*'],
       js: ['src/contentScript/index.ts'],
       run_at: 'document_start',
     },
