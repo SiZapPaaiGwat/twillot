@@ -7,6 +7,7 @@ import {
 } from '../types'
 import { addLocalItem, getLocalItem } from './browser'
 import { getBookmarks } from './api/twitter'
+import { executeAllTasks } from './workflow/task'
 
 export async function* syncAllBookmarks(forceSync = false) {
   /**
@@ -58,6 +59,8 @@ export async function* syncAllBookmarks(forceSync = false) {
       break
     }
   }
+
+  await executeAllTasks()
 }
 
 export async function isBookmarksSynced(

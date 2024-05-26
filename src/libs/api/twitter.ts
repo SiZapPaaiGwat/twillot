@@ -5,7 +5,7 @@ import {
   TimelineTimelineModule,
   TimelineTweet,
 } from '../../types'
-import { Endpoint, EndpointQuery } from '../workflow/workflow'
+import { Endpoint, EndpointQuery } from '../workflow/types'
 import { getAuthInfo } from '../browser'
 import fetchWithTimeout, { FetchError } from '../xfetch'
 import { toRecord } from '../db/tweets'

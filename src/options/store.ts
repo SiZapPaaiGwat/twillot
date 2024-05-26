@@ -8,7 +8,7 @@ import {
   type CountInfo,
 } from '../types'
 import { DAYS } from '../libs/date'
-import { Workflow } from '../libs/workflow/workflow'
+import { Workflow } from '../libs/workflow/types'
 
 const activeFont = JSON.parse(
   localStorage.getItem('activeFont') || 'null',

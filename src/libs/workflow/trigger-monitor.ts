@@ -8,7 +8,7 @@ import {
   ActionHandler,
   ActionTypes,
   Workflow,
-} from './workflow'
+} from './types'
 import { getTweet } from '../api/twitter'
 import {
   getRequestBody,

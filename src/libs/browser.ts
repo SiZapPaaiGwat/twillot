@@ -1,5 +1,5 @@
 import { Host, X_DOMAIN } from '../types'
-import { Workflow } from './workflow/workflow'
+import { Workflow } from './workflow/types'
 import monitor from './workflow'
 
 export const getRequestBody = (

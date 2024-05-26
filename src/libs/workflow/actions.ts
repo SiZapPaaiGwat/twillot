@@ -1,5 +1,5 @@
 import { addTask } from './task'
-import { ActionContext, Task, TaskName } from './workflow'
+import { ActionContext, Task, TaskName } from './types'
 
 export default {
   /**

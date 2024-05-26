@@ -7,7 +7,7 @@
 import { mutateStore } from '../../options/store'
 import { getTweetConversations } from '../api/twitter'
 import { addRecords, countRecords, deleteRecord, getRecord } from '../db/tweets'
-import { Task, TaskName } from './workflow'
+import { Task, TaskName } from './types'
 
 export async function addTask(task: Task) {
   console.log('add task', task)

@@ -7,7 +7,7 @@ import {
   ActionHandler,
   ActionTypes,
   Workflow,
-} from './workflow/workflow'
+} from './workflow/types'
 import { getRequestBody, getWorkflows, startWorkflowListening } from './browser'
 import actions from './workflow/actions'
 

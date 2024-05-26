@@ -17,7 +17,7 @@ import {
   ActionNames,
   Trigger,
   TriggerNames,
-} from '../libs/workflow/workflow'
+} from '../libs/workflow/types'
 import { sendWorkflows } from '../libs/browser'
 
 const [store] = dataStore
