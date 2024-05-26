@@ -16,7 +16,7 @@ const [store] = dataStore
 export const getUnusedWhen = () => {
   const usedWhens = new Set(store.workflows.map((w) => w.when))
   const unusedWhens = Object.keys(TriggerNames).filter(
-    (action) => !usedWhens.has(action),
+    (action: Trigger) => !usedWhens.has(action),
   )
   return (unusedWhens.length > 0 ? unusedWhens[0] : 'CreateBookmark') as Trigger
 }

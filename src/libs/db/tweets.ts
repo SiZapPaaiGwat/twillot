@@ -169,6 +169,29 @@ export async function getRecord(id: string): Promise<Tweet | undefined> {
     }
   })
 }
+
+export async function deleteRecord(id: string): Promise<Tweet | undefined> {
+  if (!id) {
+    return Promise.resolve(undefined)
+  }
+
+  const db = await openDb()
+  const record = await getRecord(id)
+
+  return new Promise((resolve, reject) => {
+    const { objectStore } = getObjectStore(db)
+    const request = objectStore.delete(id)
+    request.onsuccess = (event: Event) => {
+      resolve(record)
+    }
+    request.onerror = (event: Event) => {
+      reject(
+        'Get record error: ' + (event.target as IDBRequest).error?.toString(),
+      )
+    }
+  })
+}
+
 export async function countRecords(
   indexName?: string,
   value?: string,

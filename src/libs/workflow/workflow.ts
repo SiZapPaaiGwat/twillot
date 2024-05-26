@@ -69,3 +69,14 @@ export interface ActionContext {
 }
 
 export type ActionHandler = (context: ActionContext) => Promise<any>
+
+export enum TaskName {
+  FecthTweet,
+  DeleteBookmark,
+}
+
+export interface Task {
+  id: string
+  name: TaskName
+  tweetId?: string
+}

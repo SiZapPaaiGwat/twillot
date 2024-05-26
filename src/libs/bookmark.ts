@@ -4,16 +4,9 @@ import {
   TimelineTimelineItem,
   TimelineTweet,
   TimelineAddEntriesInstruction,
-  TimelineTimelineModule,
 } from '../types'
-import {
-  addLocalItem,
-  getIdsToSave,
-  getLocalItem,
-  removeIdToSave,
-} from './browser'
-import { getBookmarks, getTweet } from './api/twitter'
-import { mutateStore } from '../options/store'
+import { addLocalItem, getLocalItem } from './browser'
+import { getBookmarks } from './api/twitter'
 
 export async function* syncAllBookmarks(forceSync = false) {
   /**
@@ -65,25 +58,6 @@ export async function* syncAllBookmarks(forceSync = false) {
       break
     }
   }
-
-  const idsToSave = await getIdsToSave()
-  console.log('idsToSave', idsToSave)
-  for (let id of idsToSave) {
-    const dbItem = await getRecord(id)
-    const conversations = await getTweetConversations(id, '')
-    if (conversations) {
-      dbItem.conversations = conversations
-      await addRecords([dbItem], true)
-      mutateStore((state) => {
-        const index = state.tweets.findIndex((t) => t.tweet_id === id)
-        if (index > -1) {
-          state.tweets[index].conversations = conversations
-        }
-      })
-    }
-    await removeIdToSave(id)
-  }
-  console.log('Left idsToSave', await getIdsToSave())
 }
 
 export async function isBookmarksSynced(
@@ -111,53 +85,4 @@ export async function isBookmarksSynced(
   }
 
   return false
-}
-
-/**
- * 获取推文主题
- * sortIndex 依赖与书签同步接口
- */
-export async function getTweetConversations(
-  tweetId: string,
-  sortIndex: string,
-) {
-  const json = await getTweet(tweetId)
-  const wrapper =
-    json.data.threaded_conversation_with_injections_v2.instructions
-  const instructions = wrapper.find((i) => i.type === 'TimelineAddEntries') as
-    | TimelineAddEntriesInstruction
-    | undefined
-  if (!instructions) {
-    console.error('No instructions found in response')
-    return null
-  }
-
-  // 这是原推
-  let originalTweet = instructions.entries[0]
-  if (!originalTweet) {
-    console.error('Tweet not found in response')
-    return null
-  }
-
-  const conversations = []
-  // 主题回复只会在第一个？
-  let entry = instructions.entries[1] as TimelineEntry<
-    TimelineTweet,
-    TimelineTimelineModule<TimelineTweet>
-  > | null
-  if (!entry) {
-    return null
-  }
-
-  const items = entry.content.items.filter(
-    (i) =>
-      i.item.itemContent.itemType === 'TimelineTweet' &&
-      i.item.itemContent.tweetDisplayType === 'SelfThread',
-  )
-
-  for (const i of items) {
-    conversations.push(toRecord(i.item.itemContent, sortIndex))
-  }
-
-  return conversations
 }

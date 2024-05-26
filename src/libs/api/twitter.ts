@@ -1,7 +1,14 @@
-import { BookmarksResponse } from '../../types'
+import {
+  BookmarksResponse,
+  TimelineAddEntriesInstruction,
+  TimelineEntry,
+  TimelineTimelineModule,
+  TimelineTweet,
+} from '../../types'
 import { Endpoint, EndpointQuery } from '../workflow/workflow'
 import { getAuthInfo } from '../browser'
 import fetchWithTimeout, { FetchError } from '../xfetch'
+import { toRecord } from '../db/tweets'
 
 const pageSize = 100
 
@@ -208,4 +215,50 @@ export function getTweet(tweetId: string, cursor?: string) {
     method: 'GET',
     body: null,
   })
+}
+
+/**
+ * 获取推文主题
+ * sortIndex 依赖与书签同步接口
+ */
+export async function getTweetConversations(tweetId: string) {
+  const json = await getTweet(tweetId)
+  const wrapper =
+    json.data.threaded_conversation_with_injections_v2.instructions
+  const instructions = wrapper.find((i) => i.type === 'TimelineAddEntries') as
+    | TimelineAddEntriesInstruction
+    | undefined
+  if (!instructions) {
+    console.error('No instructions found in response')
+    return null
+  }
+
+  // 这是原推
+  let originalTweet = instructions.entries[0]
+  if (!originalTweet) {
+    console.error('Tweet not found in response')
+    return null
+  }
+
+  const conversations = []
+  // 主题回复只会在第一个？
+  let entry = instructions.entries[1] as TimelineEntry<
+    TimelineTweet,
+    TimelineTimelineModule<TimelineTweet>
+  > | null
+  if (!entry) {
+    return null
+  }
+
+  const items = entry.content.items.filter(
+    (i) =>
+      i.item.itemContent.itemType === 'TimelineTweet' &&
+      i.item.itemContent.tweetDisplayType === 'SelfThread',
+  )
+
+  for (const i of items) {
+    conversations.push(toRecord(i.item.itemContent, ''))
+  }
+
+  return conversations
 }

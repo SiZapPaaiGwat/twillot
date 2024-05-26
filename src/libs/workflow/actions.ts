@@ -1,5 +1,5 @@
-import { setIdToSave } from '../browser'
-import { ActionContext } from './workflow'
+import { addTask } from './task'
+import { ActionContext, Task, TaskName } from './workflow'
 
 export default {
   /**
@@ -23,6 +23,10 @@ export default {
       return
     }
 
-    await setIdToSave(tweet_id)
+    await addTask({
+      id: Date.now().toString(16),
+      name: TaskName.FecthTweet,
+      tweetId: tweet_id,
+    } as Task)
   },
 }
