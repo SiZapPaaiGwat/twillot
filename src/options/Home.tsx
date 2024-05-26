@@ -54,9 +54,7 @@ export const Home = () => {
       </Show>
 
       <div class="mb-4">
-        <div class="sticky z-50 hidden bg-white py-4 dark:bg-[#121212] lg:top-[66px] lg:block">
-          <Filter />
-        </div>
+        <Filter />
         <For each={store.tweets}>
           {(tweet, index) => (
             <div class="rounded-md p-2 hover:bg-[#121212] hover:bg-opacity-5">
@@ -107,6 +105,11 @@ export const Home = () => {
               </div>
               <div class="-mt-2 pl-12 text-[rgb(15,20,25)] dark:text-white">
                 <Content tweet={tweet} keyword={store.keyword} />
+                <Show when={tweet.conversations}>
+                  <For each={tweet.conversations}>
+                    {(conversation) => <Content tweet={conversation} />}
+                  </For>
+                </Show>
                 <Show when={tweet.quoted_tweet}>
                   <div class="relative inline-flex w-full items-center justify-center">
                     <hr class="my-8 h-1 w-64 rounded border-0 bg-gray-200 dark:bg-gray-700" />

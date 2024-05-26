@@ -16,37 +16,39 @@ export default function Filter() {
 
   return (
     <Show when={isFilterVisible()}>
-      <div class="flex items-center gap-2">
-        <h3 class="text-lg font-medium">Filter:</h3>
-        <Show when={category()}>
-          <button onClick={() => setStore('category', '')} class={clsName}>
-            <IconBookmark cls="h-4 w-4" />
-            {category()}
+      <div class="sticky z-50 hidden bg-white py-4 dark:bg-[#121212] lg:top-[67px] lg:block">
+        <div class="flex items-center gap-2">
+          <h3 class="text-lg font-medium">Filter:</h3>
+          <Show when={category()}>
+            <button onClick={() => setStore('category', '')} class={clsName}>
+              <IconBookmark cls="h-4 w-4" />
+              {category()}
+            </button>
+          </Show>
+          <Show when={store.folder}>
+            <button onClick={() => setStore('folder', '')} class={clsName}>
+              <IconFolders cls="h-4 w-4" />
+              {store.folder}
+            </button>
+          </Show>
+          <Show when={store.keyword}>
+            <button onClick={() => setStore('keyword', '')} class={clsName}>
+              {store.keyword}
+            </button>
+          </Show>
+          <button
+            onClick={() => {
+              setStore({
+                category: '',
+                folder: '',
+                keyword: '',
+              })
+              navigate('/')
+            }}
+          >
+            <IconTrash />
           </button>
-        </Show>
-        <Show when={store.folder}>
-          <button onClick={() => setStore('folder', '')} class={clsName}>
-            <IconFolders cls="h-4 w-4" />
-            {store.folder}
-          </button>
-        </Show>
-        <Show when={store.keyword}>
-          <button onClick={() => setStore('keyword', '')} class={clsName}>
-            {store.keyword}
-          </button>
-        </Show>
-        <button
-          onClick={() => {
-            setStore({
-              category: '',
-              folder: '',
-              keyword: '',
-            })
-            navigate('/')
-          }}
-        >
-          <IconTrash />
-        </button>
+        </div>
       </div>
     </Show>
   )
