@@ -6,7 +6,12 @@ import {
   TimelineAddEntriesInstruction,
   TimelineTimelineModule,
 } from '../types'
-import { addLocalItem, getIdsToSave, getLocalItem } from './browser'
+import {
+  addLocalItem,
+  getIdsToSave,
+  getLocalItem,
+  removeIdToSave,
+} from './browser'
 import { getBookmarks, getTweet } from './api/twitter'
 
 export async function* syncAllBookmarks(forceSync = false) {
@@ -61,15 +66,15 @@ export async function* syncAllBookmarks(forceSync = false) {
   }
 
   const idsToSave = await getIdsToSave()
-  console.log('idsToSave', idsToSave)
   for (let id of idsToSave) {
     const dbItem = await getRecord(id)
     const conversations = await getTweetConversations(id, '')
-    console.log('conversations', conversations)
     if (conversations) {
       dbItem.conversations = conversations
       await addRecords([dbItem], true)
+      // TODO update store
     }
+    await removeIdToSave(id)
   }
 }
 

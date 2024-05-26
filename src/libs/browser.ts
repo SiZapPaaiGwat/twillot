@@ -81,8 +81,10 @@ export async function setIdToSave(id: string) {
   await addLocalItem('idsToSave', ids)
 }
 
-export function removeIdToSave() {
-  return chrome.storage.local.remove('idsToSave')
+export async function removeIdToSave(id: string) {
+  const ids = await getIdsToSave()
+  ids.splice(ids.indexOf(id), 1)
+  await chrome.storage.local.set({ idsToSave: ids })
 }
 
 export function openNewTab(url: string, active = true) {

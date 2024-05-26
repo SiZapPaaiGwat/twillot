@@ -7,7 +7,6 @@ export default {
    * idsToSave 列表会在入库时拉取主题推文全部内容
    */
   saveTweetId: async (context: ActionContext) => {
-    console.debug('save_tweet_id', context)
     const { requestBody, triggerName } = context
     let tweet_id = ''
     if (triggerName === 'CreateBookmark') {
