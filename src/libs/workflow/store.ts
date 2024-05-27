@@ -12,6 +12,23 @@ import { getTasks, removeTask } from './task'
 
 const [store] = dataStore
 
+const defaultWorkflows: Workflow[] = [
+  {
+    id: '0',
+    name: 'Auto unroll threads when a bookmark is created',
+    editable: false,
+    when: 'CreateBookmark',
+    thenList: ['UnrollThread'],
+  },
+  {
+    id: '1',
+    name: 'Delete from local when a bookmark is deleted',
+    editable: false,
+    when: 'DeleteBookmark',
+    thenList: ['DeleteBookmark'],
+  },
+]
+
 export const getUnusedWhen = () => {
   const usedWhens = new Set(store.workflows.map((w) => w.when))
   const unusedWhens = Object.keys(TriggerNames).filter(
@@ -77,7 +94,14 @@ export const saveWorkflow = async (index: number) => {
 
 export const getWorkflows = async () => {
   const dbRecords = await readConfig(OptionName.WORKFLOW)
-  const workflows = (dbRecords?.option_value || []) as Workflow[]
+  let workflows = (dbRecords?.option_value || []) as Workflow[]
+  if (!workflows || !workflows.length) {
+    workflows = [...defaultWorkflows]
+    await upsertConfig({
+      option_name: OptionName.WORKFLOW,
+      option_value: workflows,
+    })
+  }
   mutateStore((state) => {
     state.workflows = workflows
   })

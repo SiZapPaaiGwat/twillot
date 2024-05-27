@@ -23,6 +23,8 @@ export enum Endpoint {
 
 export interface Workflow {
   id: string
+  name?: string
+  editable?: boolean
   when: Trigger
   thenList: Action[]
 }
