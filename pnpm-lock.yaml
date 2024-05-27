@@ -40,6 +40,9 @@ devDependencies:
   '@webext-core/fake-browser':
     specifier: ^1.3.1
     version: 1.3.1
+  '@webext-core/storage':
+    specifier: ^1.2.0
+    version: 1.2.0
   autoprefixer:
     specifier: ^10.4.19
     version: 10.4.19(postcss@8.4.38)
@@ -79,6 +82,9 @@ devDependencies:
   vitest:
     specifier: ^1.6.0
     version: 1.6.0(jsdom@24.0.0)
+  webextension-polyfill:
+    specifier: ^0.12.0
+    version: 0.12.0
 
 packages:
 
@@ -1223,6 +1229,12 @@ packages:
     resolution: {integrity: sha512-NpBl0rXL6rT3msdl9Fb1GPLd/MKJEZ3pHpxuMdlu+qKW78T6SWJqDvyAVs8VjAmYs9RHoQJc+yObxQoGWdskXQ==}
     dependencies:
       lodash.merge: 4.6.2
+    dev: true
+
+  /@webext-core/storage@1.2.0:
+    resolution: {integrity: sha512-XI86HJUhugVdAQZLcj3EH/rZv08ByVn2riX3YI4HCJ86NOH5K3OwGi0ClFa/kq5U5hIVDMG6hwOBwgEgI2G5GQ==}
+    dependencies:
+      webextension-polyfill: 0.10.0
     dev: true
 
   /acorn-walk@8.3.2:
@@ -5418,6 +5430,14 @@ packages:
     engines: {node: '>=18'}
     dependencies:
       xml-name-validator: 5.0.0
+    dev: true
+
+  /webextension-polyfill@0.10.0:
+    resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==}
+    dev: true
+
+  /webextension-polyfill@0.12.0:
+    resolution: {integrity: sha512-97TBmpoWJEE+3nFBQ4VocyCdLKfw54rFaJ6EVQYLBCXqCIpLSZkwGgASpv4oPt9gdKCJ80RJlcmNzNn008Ag6Q==}
     dev: true
 
   /webidl-conversions@7.0.0:

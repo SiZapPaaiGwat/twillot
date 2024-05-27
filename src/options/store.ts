@@ -15,7 +15,7 @@ const activeFont = JSON.parse(
 ) as FontSet | null
 const fontSize = parseInt(localStorage.getItem('fontSize') || '16', 10)
 
-const store = createStore({
+export const defaultState = () => ({
   keyword: '',
   category: '',
   folder: '',
@@ -44,6 +44,8 @@ const store = createStore({
   isSidePanel: location.pathname.endsWith('sidepanel.html'),
   workflows: new Array<Workflow>(),
 })
+
+const store = createStore(defaultState())
 
 const [state, setStore] = store
 

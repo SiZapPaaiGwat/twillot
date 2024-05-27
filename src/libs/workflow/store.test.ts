@@ -1,22 +1,31 @@
-import { fakeBrowser } from '@webext-core/fake-browser'
+import browser from 'webextension-polyfill'
 import { describe, it, expect, beforeEach } from 'vitest'
+import { addWorkflow } from './store'
+import dataStore, { defaultState } from '../../options/store'
+
+const [store, setStore] = dataStore
 
 // Normally, the function being tested would be in a different file
 async function isXyzEnabled(): Promise<boolean> {
-  const { xyz } = await fakeBrowser.storage.local.get('xyz')
+  const { xyz } = await browser.storage.local.get('xyz')
   return xyz
 }
 
-describe('isXyzEnabled', () => {
+describe('Workflow Store Module', () => {
   beforeEach(() => {
-    fakeBrowser.reset()
+    browser.reset()
+    setStore(defaultState())
   })
 
   it('should return true when enabled', async () => {
     const expected = true
-    // Use either browser or fakeBrowser to setup your test case
-    await fakeBrowser.storage.local.set({ xyz: expected })
+    await browser.storage.local.set({ xyz: expected })
     const actual = await isXyzEnabled()
     expect(actual).toBe(expected)
+  })
+
+  it('addWorkflow', () => {
+    addWorkflow()
+    expect(store.workflows.length).toBe(1)
   })
 })
