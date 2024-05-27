@@ -7,6 +7,9 @@ import { getRequestBody } from '../browser'
 import { Action, ActionHandler } from './actions'
 import { getWorkflows, startWorkflowListening } from './bg'
 
+/**
+ * 没有接口共用，单一用途的触发器
+ */
 const simpleTriggers =
   'CreateRetweet CreateNoteTweet CreateScheduledTweet CreateBookmark DeleteBookmark FavoriteTweet'.split(
     ' ',

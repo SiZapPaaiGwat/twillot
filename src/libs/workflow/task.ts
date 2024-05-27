@@ -4,6 +4,7 @@
  * 实际执行在 options 页面
  */
 
+import { sendMessageToOptions } from '../browser'
 import { Action } from './actions'
 
 export interface Task {
@@ -12,11 +13,15 @@ export interface Task {
   tweetId?: string
 }
 
+/**
+ * 同时向 options 页面发送消息，通知任务已添加
+ */
 export async function addTask(task: Task) {
   console.log('add task', task)
   const tasks = await getTasks()
   tasks.push(task)
   await saveTasks(tasks)
+  await sendMessageToOptions({ type: 'sync_task', task })
 }
 
 export async function getTasks(): Promise<Task[]> {

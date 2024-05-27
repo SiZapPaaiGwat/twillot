@@ -1,15 +1,5 @@
 import { Host } from '../../types'
 
-export enum TriggerTypes {
-  CreateTweet = 'CreateTweet',
-  CreateNoteTweet = 'CreateNoteTweet',
-  CreateScheduledTweet = 'CreateScheduledTweet',
-  ReplyTweet = 'ReplyTweet',
-  CreateBookmark = 'CreateBookmark',
-  DeleteBookmark = 'DeleteBookmark',
-  FavoriteTweet = 'FavoriteTweet',
-}
-
 export enum TriggerNames {
   CreateTweet = 'Create a tweet',
   CreateNoteTweet = 'Create a note tweet',
@@ -20,7 +10,7 @@ export enum TriggerNames {
   FavoriteTweet = 'Favorite a tweet',
 }
 
-export type Trigger = keyof typeof TriggerTypes
+export type Trigger = keyof typeof TriggerNames
 
 /**
  * 开始监听用户的触发动作
