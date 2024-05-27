@@ -40,7 +40,7 @@ const WorkflowConfigurator = () => {
         {(workflow, workflowIndex) => (
           <div class="mb-4 rounded-md border border-gray-200 p-4 dark:border-gray-700">
             <div class="mb-2 flex items-center justify-between gap-4">
-              <span class="flex-1 font-bold">Workflow #{workflow.id}</span>
+              <span class="flex-1 font-bold">Workflow</span>
               <button
                 type="button"
                 class="mb-2 me-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -54,7 +54,7 @@ const WorkflowConfigurator = () => {
               <div class="w-56 rounded-lg border border-gray-200 text-sm text-gray-500 shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
                 <div class="group flex rounded-t-lg border-b border-gray-200 bg-gray-100 px-3 py-2 dark:border-gray-600 dark:bg-gray-700">
                   <h3 class="ml-6 flex-1 text-center font-semibold text-gray-900 dark:text-white">
-                    When you
+                    Trigger
                   </h3>
                   <button
                     class="invisible ml-2 block text-xs text-red-600 group-hover:visible"
@@ -90,12 +90,12 @@ const WorkflowConfigurator = () => {
                 {(thenAction, thenIndex) => (
                   <>
                     <div class="text-gray-500 dark:text-gray-400">
-                      <IconArrow />
+                      <IconArrow class="w-15 h-6" />
                     </div>
                     <div class="w-56 rounded-lg border border-gray-200 text-sm text-gray-500 shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
                       <div class="group flex rounded-t-lg border-b border-gray-200 bg-gray-100 px-3 py-2 dark:border-gray-600 dark:bg-gray-700">
                         <h3 class="ml-6 flex-1 text-center font-semibold text-gray-900 dark:text-white">
-                          Then
+                          Action
                         </h3>
                         <button
                           class="invisible ml-2 block text-xs text-red-600 group-hover:visible"

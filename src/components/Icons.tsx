@@ -307,10 +307,9 @@ export const IconTrash = () => (
   </svg>
 )
 
-export const IconArrow = () => (
+export const IconArrow = (props) => (
   <svg
-    width="100"
-    height="30"
+    class={props.class}
     viewBox="0 0 100 30"
     fill="none"
     xmlns="https://www.w3.org/2000/svg"
