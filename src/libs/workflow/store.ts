@@ -26,7 +26,7 @@ export const getUsedThens = (currentThens: Action[]) => {
 
 export const getUnusedThen = (currentThens: Action[]) => {
   const usedThens = getUsedThens(currentThens)
-  const allThens = Object.values(Action)
+  const allThens = Object.keys(ActionNames)
   const unusedThens = allThens.filter(
     (action) => !usedThens.has(action as Action),
   )
@@ -146,42 +146,60 @@ export const updateThen = (
   })
 }
 
+/**
+ * 任务执行前置条件，同步最新的书签数据（主要是 sortIndex 字段）
+ */
 export async function executeAllTasks() {
   const tasks = await getTasks()
+  console.log('execute tasks', tasks)
   for (const task of tasks) {
     console.log('execute task', task)
     /**
      * 自动同步 threads
      */
-    if (task.name === Action.UnrollThread) {
+    if (task.name === 'UnrollThread') {
       const dbItem = await getRecord(task.tweetId)
-      const conversations = await getTweetConversations(task.tweetId)
-      if (conversations) {
-        dbItem.conversations = conversations
-        await addRecords([dbItem], true)
+      if (dbItem) {
+        const conversations = await getTweetConversations(task.tweetId)
+        if (conversations) {
+          dbItem.conversations = conversations
+          await addRecords([dbItem], true)
+          mutateStore((state) => {
+            const index = state.tweets.findIndex(
+              (t) => t.tweet_id === task.tweetId,
+            )
+            if (index > -1) {
+              state.tweets[index].conversations = conversations
+            }
+          })
+        } else {
+          console.log('no conversations found for tweet', task.tweetId)
+        }
+      } else {
+        console.error(
+          `Bookmark is not found in database for tweet ${task.tweetId}`,
+        )
+      }
+    } else if (task.name === 'DeleteBookmark') {
+      const record = await deleteRecord(task.tweetId)
+      if (!record) {
+        console.log('record not found for tweet', task.tweetId)
+      } else {
+        const totalCount = await countRecords()
         mutateStore((state) => {
           const index = state.tweets.findIndex(
             (t) => t.tweet_id === task.tweetId,
           )
           if (index > -1) {
-            state.tweets[index].conversations = conversations
+            state.tweets.splice(index, 1)
           }
+          if (record.folder) {
+            state.folders[record.folder] -= 1
+          }
+          state.totalCount = totalCount
+          state.selectedTweet = -1
         })
       }
-    } else if (task.name === Action.DeleteBookmark) {
-      const record = await deleteRecord(task.tweetId)
-      const totalCount = await countRecords()
-      mutateStore((state) => {
-        const index = state.tweets.findIndex((t) => t.tweet_id === task.tweetId)
-        if (index > -1) {
-          state.tweets.splice(index, 1)
-        }
-        if (record.folder) {
-          state.folders[record.folder] -= 1
-        }
-        state.totalCount = totalCount
-        state.selectedTweet = -1
-      })
     } else {
       console.error(`task ${task.name} not supported`)
     }

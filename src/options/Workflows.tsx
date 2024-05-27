@@ -113,11 +113,11 @@ const WorkflowConfigurator = () => {
                             updateThen(
                               workflowIndex(),
                               thenIndex(),
-                              parseInt(e.currentTarget.value) as Action,
+                              e.currentTarget.value as Action,
                             )
                           }
                         >
-                          {Object.values(Action).map((action) => (
+                          {Object.keys(ActionNames).map((action) => (
                             <option
                               value={action}
                               selected={action === thenAction}

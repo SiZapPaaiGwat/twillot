@@ -2,6 +2,7 @@ import {
   BookmarksResponse,
   TimelineAddEntriesInstruction,
   TimelineEntry,
+  TimelineTimelineItem,
   TimelineTimelineModule,
   TimelineTweet,
 } from '../../types'
@@ -246,8 +247,11 @@ export async function getTweetConversations(tweetId: string) {
   }
 
   // 这是原推
-  let originalTweet = instructions.entries[0]
-  if (!originalTweet) {
+  let originalTweetEntry = instructions.entries[0] as TimelineEntry<
+    TimelineTweet,
+    TimelineTimelineItem<TimelineTweet>
+  > | null
+  if (!originalTweetEntry) {
     console.error('Tweet not found in response')
     return null
   }
