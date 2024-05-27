@@ -1,34 +1,26 @@
 import browser from 'webextension-polyfill'
+import 'fake-indexeddb/auto'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 import {
+  addThen,
   addWorkflow,
   getUnusedThen,
   getUnusedWhen,
   getUsedThens,
+  renameWorkflow,
+  saveWorkflow,
 } from './store'
-import dataStore, { defaultState } from '../../options/store'
+import dataStore, { defaultState, mutateStore } from '../../options/store'
 import { Action } from './actions'
 import { readConfig } from '../db/configs'
 
 const [store, setStore] = dataStore
 
-async function isXyzEnabled(): Promise<boolean> {
-  const { xyz } = await browser.storage.local.get('xyz')
-  return xyz
-}
-
 describe('Workflow Store Module', () => {
   beforeEach(() => {
     browser.reset()
     setStore(defaultState())
-  })
-
-  it('should return true when enabled', async () => {
-    const expected = true
-    await browser.storage.local.set({ xyz: expected })
-    const actual = await isXyzEnabled()
-    expect(actual).toBe(expected)
   })
 
   it('getUnusedWhen should return the first unused trigger', () => {
@@ -45,14 +37,25 @@ describe('Workflow Store Module', () => {
   it('getUnusedThen should return the first unused action', () => {
     const currentThens = ['UnrollThread']
     const unusedThen = getUnusedThen(currentThens as Action[])
-    expect(unusedThen).toBe('DeleteBookmark') // Assuming 'translate' is the default unused action
+    expect(unusedThen).toBe('DeleteBookmark')
   })
 
-  it('addWorkflow', () => {
+  it('addWorkflow should add a new workflow to the store', () => {
     addWorkflow()
     expect(store.workflows.length).toBe(1)
     expect(store.workflows[0].name).toBe('')
     expect(store.workflows[0].unchanged).toBe(true)
     expect(store.workflows[0].editable).toBe(true)
+    expect(store.workflows[0].when).not.toBeUndefined()
+  })
+
+  it('saveWorkflow should save the workflow to the store', async () => {
+    addWorkflow()
+    renameWorkflow(0, 'Test')
+    expect(store.workflows[0].name).toBe('Test')
+    addThen(0)
+    expect(store.workflows[0].thenList.length).toBe(1)
+    await saveWorkflow(0)
+    expect(store.workflows[0].name).toBe('Test')
   })
 })
