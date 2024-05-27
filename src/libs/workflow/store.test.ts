@@ -1,11 +1,18 @@
 import browser from 'webextension-polyfill'
-import { describe, it, expect, beforeEach } from 'vitest'
-import { addWorkflow } from './store'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+import {
+  addWorkflow,
+  getUnusedThen,
+  getUnusedWhen,
+  getUsedThens,
+} from './store'
 import dataStore, { defaultState } from '../../options/store'
+import { Action } from './actions'
+import { readConfig } from '../db/configs'
 
 const [store, setStore] = dataStore
 
-// Normally, the function being tested would be in a different file
 async function isXyzEnabled(): Promise<boolean> {
   const { xyz } = await browser.storage.local.get('xyz')
   return xyz
@@ -24,8 +31,56 @@ describe('Workflow Store Module', () => {
     expect(actual).toBe(expected)
   })
 
+  it('getUnusedWhen should return the first unused trigger', () => {
+    const unusedWhen = getUnusedWhen()
+    expect(unusedWhen).toBe('CreateBookmark')
+  })
+
+  it('getUsedThens should return a set of current thens', () => {
+    const currentThens = ['UnrollThread'] as Action[]
+    const usedThens = getUsedThens(currentThens)
+    expect(usedThens).toEqual(new Set(currentThens))
+  })
+
+  it('getUnusedThen should return the first unused action', () => {
+    const currentThens = ['UnrollThread']
+    const unusedThen = getUnusedThen(currentThens as Action[])
+    expect(unusedThen).toBe('DeleteBookmark') // Assuming 'translate' is the default unused action
+  })
+
+  it('isWorkflowUnchanged should return true if workflow is unchanged', async () => {
+    const workflowsDB = [
+      {
+        id: '0',
+        name: 'Auto unroll threads when a bookmark is created',
+        editable: false,
+        when: 'CreateBookmark',
+        thenList: ['UnrollThread'],
+      },
+    ]
+
+    setStore({
+      ...defaultState(),
+      workflows: [
+        {
+          id: '0',
+          name: 'Auto unroll threads when a bookmark is created',
+          editable: false,
+          when: 'CreateBookmark',
+          thenList: ['UnrollThread'],
+        },
+      ],
+    })
+
+    const result = await isWorkflowUnchanged(0)
+    expect(result).toBe(true)
+  })
+
   it('addWorkflow', () => {
     addWorkflow()
     expect(store.workflows.length).toBe(1)
+    expect(store.workflows[0].name).toBe('')
+    expect(store.workflows[0].unchanged).toBe(true)
+    expect(store.workflows[0].editable).toBe(true)
   })
 })

@@ -1,12 +1,15 @@
 import { Host } from '../../types'
 
+/**
+ * NOTE: 注意顺序可能影响单元测试
+ */
 export enum TriggerNames {
+  CreateBookmark = 'Create a bookmark',
+  DeleteBookmark = 'Delete a bookmark',
   CreateTweet = 'Create a tweet',
   CreateNoteTweet = 'Create a note tweet',
   CreateScheduledTweet = 'Create a scheduled tweet',
   ReplyTweet = 'Reply to a tweet',
-  CreateBookmark = 'Create a bookmark',
-  DeleteBookmark = 'Delete a bookmark',
   FavoriteTweet = 'Favorite a tweet',
 }
 
