@@ -24,7 +24,10 @@ export enum Endpoint {
 export interface Workflow {
   id: string
   name?: string
+  // 系统默认的工作流无法修改
   editable?: boolean
+  // 修改后才能保存
+  unchanged?: boolean
   when: Trigger
   thenList: Action[]
 }

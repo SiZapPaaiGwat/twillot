@@ -50,17 +50,46 @@ export const getUnusedThen = (currentThens: Action[]) => {
   return (unusedThens.length > 0 ? unusedThens[0] : 'translate') as Action
 }
 
+export const isWorkflowUnchanged = async (index: number) => {
+  const workflow = store.workflows[index]
+  const workflowsDB = (await readConfig(OptionName.WORKFLOW))
+    .option_value as Workflow[]
+  const dbWorkflow = workflowsDB.find((wDB) => wDB.id === workflow.id)
+  if (dbWorkflow) {
+    return 'name,when,thenList'
+      .split(',')
+      .every((key) =>
+        key === 'thenList'
+          ? workflow[key].join(',') === dbWorkflow[key].join(',')
+          : workflow[key] === dbWorkflow[key],
+      )
+  } else {
+    return !workflow.name || workflow.thenList.length < 1
+  }
+}
+
 /**
  * 仅更新 store 中的数据，不更新数据库
  */
 export const addWorkflow = () => {
   const newWorkflow: Workflow = {
     id: Date.now().toString(16),
+    name: '',
+    editable: true,
+    unchanged: true,
     when: getUnusedWhen(),
     thenList: [],
   }
   mutateStore((state) => {
     state.workflows.unshift(newWorkflow)
+  })
+}
+
+export const renameWorkflow = (index: number, value: string) => {
+  mutateStore(async (state) => {
+    const current = state.workflows[index]
+    current.name = value
+    current.unchanged = await isWorkflowUnchanged(index)
   })
 }
 
@@ -71,6 +100,7 @@ export const saveWorkflow = async (index: number) => {
   const workflow = unwrap(store.workflows[index])
   const dbRecords = await readConfig(OptionName.WORKFLOW)
   let workflows = []
+  delete workflow.unchanged
   // 如果数据库中没有记录，则直接插入
   if (!dbRecords) {
     workflows.push(workflow)
@@ -87,9 +117,29 @@ export const saveWorkflow = async (index: number) => {
     option_name: OptionName.WORKFLOW,
     option_value: workflows,
   })
+  mutateStore((state) => {
+    state.workflows[index].unchanged = true
+  })
 
   console.log('Workflow saved to database', workflows)
   sendWorkflows(workflows)
+}
+
+export const removeWorkflow = async (index: number) => {
+  const id = store.workflows[index].id
+  const dbRecords = await readConfig(OptionName.WORKFLOW)
+  const dbWorkflows = (dbRecords?.option_value || []) as Workflow[]
+  const isDbItem = dbWorkflows.some((w) => w.id === id)
+  mutateStore((state) => {
+    state.workflows.splice(index, 1)
+    if (isDbItem) {
+      const items = unwrap(state.workflows)
+      upsertConfig({
+        option_name: OptionName.WORKFLOW,
+        option_value: items,
+      })
+    }
+  })
 }
 
 export const getWorkflows = async () => {
@@ -102,25 +152,20 @@ export const getWorkflows = async () => {
       option_value: workflows,
     })
   }
+  workflows.forEach((w) => {
+    w.unchanged = true
+  })
   mutateStore((state) => {
     state.workflows = workflows
   })
   return workflows
 }
 
-export const removeWorkflow = async (index: number) => {
-  const id = store.workflows[index].id
-  const dbRecords = await readConfig(OptionName.WORKFLOW)
-  const dbWorkflows = (dbRecords?.option_value || []) as Workflow[]
-  const isDbItem = dbWorkflows.some((w) => w.id === id)
-  mutateStore((state) => {
-    state.workflows.splice(index, 1)
-    if (isDbItem) {
-      upsertConfig({
-        option_name: OptionName.WORKFLOW,
-        option_value: unwrap(state.workflows),
-      })
-    }
+export const updateWhen = (workflowIndex: number, newWhen: Trigger) => {
+  mutateStore(async (state) => {
+    const current = state.workflows[workflowIndex]
+    current.when = newWhen
+    current.unchanged = await isWorkflowUnchanged(workflowIndex)
   })
 }
 
@@ -131,28 +176,23 @@ export const addThen = (index: number) => {
     return
   }
 
-  mutateStore((state) => {
-    state.workflows[index].thenList.push(getUnusedThen(workflow.thenList))
+  mutateStore(async (state) => {
+    const current = state.workflows[index]
+    current.thenList.push(getUnusedThen(workflow.thenList))
+    current.unchanged = await isWorkflowUnchanged(index)
   })
 }
 
 export const removeThen = (workflowIndex: number, thenIndex: number) => {
   const workflow = store.workflows[workflowIndex]
   if (workflow.thenList.length === 1) {
-    mutateStore((state) => {
-      state.workflows.splice(workflowIndex, 1)
-    })
     return
   }
 
-  mutateStore((state) => {
+  mutateStore(async (state) => {
+    const current = state.workflows[workflowIndex]
     state.workflows[workflowIndex].thenList.splice(thenIndex, 1)
-  })
-}
-
-export const updateWhen = (workflowIndex: number, newWhen: Trigger) => {
-  mutateStore((state) => {
-    state.workflows[workflowIndex].when = newWhen
+    current.unchanged = await isWorkflowUnchanged(workflowIndex)
   })
 }
 
@@ -161,12 +201,14 @@ export const updateThen = (
   thenIndex: number,
   newThen: Action,
 ) => {
-  mutateStore((state) => {
-    const index = state.workflows[workflowIndex].thenList.indexOf(newThen)
-    state.workflows[workflowIndex].thenList[thenIndex] = newThen
+  mutateStore(async (state) => {
+    const current = state.workflows[workflowIndex]
+    const index = current.thenList.indexOf(newThen)
+    current.thenList[thenIndex] = newThen
     if (index > -1) {
       state.workflows[workflowIndex].thenList.splice(index, 1)
     }
+    current.unchanged = await isWorkflowUnchanged(workflowIndex)
   })
 }
 

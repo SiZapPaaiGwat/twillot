@@ -5,6 +5,7 @@ import { IconArrow, IconPlus, IconTrash } from '../components/Icons'
 import {
   addThen,
   addWorkflow,
+  renameWorkflow,
   getWorkflows,
   removeThen,
   removeWorkflow,
@@ -28,26 +29,43 @@ const WorkflowConfigurator = () => {
 
   return (
     <div class="container mx-auto p-4 text-base">
-      <h1 class="mb-4 text-2xl font-bold">Configure your workflow</h1>
-      <button
-        onClick={addWorkflow}
-        type="button"
-        class="mb-8 me-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        Add a new workflow
-      </button>
+      <div class="flex items-center gap-8">
+        <h1 class="mb-4 flex-1 text-2xl font-bold">Workflows</h1>
+        <button
+          onClick={addWorkflow}
+          type="button"
+          class="mb-8 me-2 min-w-24 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Add
+        </button>
+      </div>
+
       <For each={store.workflows}>
         {(workflow, workflowIndex) => (
           <div class="mb-4 rounded-md border border-gray-200 p-4 dark:border-gray-700">
             <div class="mb-4 flex items-center justify-between gap-4">
-              <span class="flex-1 font-bold">
-                {workflow.name || 'Untitled'}
-              </span>
+              <form class="flex w-full items-center">
+                <input
+                  type="text"
+                  name="folder"
+                  class="block w-full border-b py-2 text-lg font-bold text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600  dark:border-b-[#121212]  dark:bg-[#121212] dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 "
+                  placeholder="Untitled workflow (Click to edit)"
+                  value={workflow.name}
+                  readOnly={!workflow.editable}
+                  onInput={(e) =>
+                    renameWorkflow(
+                      workflowIndex(),
+                      e.currentTarget.value.trim(),
+                    )
+                  }
+                />
+              </form>
               <Show when={workflow.editable}>
                 <button
                   type="button"
-                  class="mb-2 me-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  class="me-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   onClick={() => saveWorkflow(workflowIndex())}
+                  disabled={workflow.unchanged}
                 >
                   Save
                 </button>
