@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.19",
+    "@faker-js/faker": "^8.4.1",
+    "@jackfranklin/test-data-bot": "^2.1.0",
     "@solidjs/testing-library": "^0.8.8",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/user-event": "^14.5.2",

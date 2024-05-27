@@ -362,7 +362,12 @@ export function getTweetId(
   return tweet?.legacy?.id_str || ''
 }
 
-export async function aggregateUsers() {
+export async function aggregateUsers(): Promise<
+  Record<
+    string,
+    { username: string; avatar_url: string; screen_name: string; count: number }
+  >
+> {
   const db = await openDb()
   const userInfo = {}
 
