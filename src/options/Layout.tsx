@@ -30,6 +30,7 @@ import {
   moveTweetsToFolder,
   removeFolder,
 } from '../stores/folders'
+import { startTasksLitening } from '../libs/workflow'
 
 export const Layout = (props) => {
   const [store, setStore] = dataStore
@@ -66,8 +67,9 @@ export const Layout = (props) => {
   onMount(() => {
     if (!store.isSidePanel) {
       initHistory()
-      initSync(searchParams.q)
+      initSync()
       initFolders()
+      startTasksLitening()
     }
   })
 

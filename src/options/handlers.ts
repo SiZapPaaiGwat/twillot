@@ -52,7 +52,7 @@ export async function queryByCondition(append = false) {
   )
 }
 
-export async function initSync(keyword = '') {
+export async function initSync() {
   const [store, setStore] = dataStore
   try {
     /**
@@ -104,7 +104,7 @@ export async function initSync(keyword = '') {
         if (store.isAutoSyncing && isSearching) {
           continue
         }
-        await query(keyword)
+        await query(store.keyword)
       }
       setStore('isAutoSyncing', false)
     }
