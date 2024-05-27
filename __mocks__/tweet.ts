@@ -7,7 +7,7 @@ import {
 } from '@jackfranklin/test-data-bot'
 import { faker } from '@faker-js/faker'
 
-import { Tweet, TweetQuoted } from '../../src/types'
+import { Tweet, TweetQuoted } from '../src/types'
 
 const locales = ['en', 'ja', 'zh-cn']
 const fields = {

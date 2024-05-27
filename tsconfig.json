@@ -18,6 +18,6 @@
     "jsxImportSource": "solid-js",
     "types": ["vite/client", "@testing-library/jest-dom", "@types/chrome"]
   },
-  "include": ["src", "tests"],
+  "include": ["src", "__mocks__"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

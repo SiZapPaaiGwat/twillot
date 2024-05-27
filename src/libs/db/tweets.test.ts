@@ -1,5 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest'
 import 'fake-indexeddb/auto'
+
 import {
   addRecords,
   findRecords,
@@ -12,7 +13,7 @@ import {
   clearFolder,
   getRandomTweet,
 } from './tweets'
-import TweetGenerator from '../../../tests/fake-data/tweet'
+import TweetGenerator from '../../../__mocks__/tweet'
 
 describe('dbModule', () => {
   afterEach(async () => {
