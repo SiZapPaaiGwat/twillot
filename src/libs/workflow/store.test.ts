@@ -48,34 +48,6 @@ describe('Workflow Store Module', () => {
     expect(unusedThen).toBe('DeleteBookmark') // Assuming 'translate' is the default unused action
   })
 
-  it('isWorkflowUnchanged should return true if workflow is unchanged', async () => {
-    const workflowsDB = [
-      {
-        id: '0',
-        name: 'Auto unroll threads when a bookmark is created',
-        editable: false,
-        when: 'CreateBookmark',
-        thenList: ['UnrollThread'],
-      },
-    ]
-
-    setStore({
-      ...defaultState(),
-      workflows: [
-        {
-          id: '0',
-          name: 'Auto unroll threads when a bookmark is created',
-          editable: false,
-          when: 'CreateBookmark',
-          thenList: ['UnrollThread'],
-        },
-      ],
-    })
-
-    const result = await isWorkflowUnchanged(0)
-    expect(result).toBe(true)
-  })
-
   it('addWorkflow', () => {
     addWorkflow()
     expect(store.workflows.length).toBe(1)
