@@ -3,12 +3,11 @@ import { unwrap } from 'solid-js/store'
 import { readConfig, upsertConfig } from '../../libs/db/configs'
 import dataStore, { mutateStore } from '../../options/store'
 import { OptionName } from '../../types'
-import { Trigger, TriggerNames } from '../../libs/workflow/triggers'
-import { Action, ActionNames } from '../../libs/workflow/actions'
-import { Workflow, sendWorkflows } from '../../libs/workflow'
+import { sendWorkflows } from './options'
 import { getTweetConversations } from '../api/twitter'
 import { addRecords, countRecords, deleteRecord, getRecord } from '../db/tweets'
 import { getTasks, removeTask } from './task'
+import { Action, ActionNames, Trigger, TriggerNames, Workflow } from './types'
 
 const [store] = dataStore
 

@@ -30,7 +30,7 @@ import {
   moveTweetsToFolder,
   removeFolder,
 } from '../stores/folders'
-import { startTasksLitening } from '../libs/workflow'
+import { startTasksLitening } from '../libs/workflow/options'
 
 export const Layout = (props) => {
   const [store, setStore] = dataStore

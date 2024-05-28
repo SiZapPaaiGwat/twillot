@@ -5,13 +5,7 @@
  */
 
 import { sendMessageToOptions } from '../browser'
-import { Action } from './actions'
-
-export interface Task {
-  id: string
-  name: Action
-  tweetId?: string
-}
+import { Task } from './types'
 
 /**
  * 同时向 options 页面发送消息，通知任务已添加

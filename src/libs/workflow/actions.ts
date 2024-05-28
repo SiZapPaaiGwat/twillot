@@ -1,22 +1,6 @@
 import { getUserTweets } from '../api/twitter'
 import { addTask } from './task'
-import { Trigger } from './triggers'
-
-export enum ActionNames {
-  UnrollThread = 'Unroll this thread',
-  DeleteBookmark = 'Delete from local',
-  AutoComment = 'Auto comment with a templated message',
-}
-
-export type Action = keyof typeof ActionNames
-
-export interface ActionContext {
-  triggerName: Trigger
-  requestBody: any
-  prevResponse: any
-}
-
-export type ActionHandler = (context: ActionContext) => Promise<any>
+import { ActionContext } from './types'
 
 export default {
   UnrollThread: async (context: ActionContext) =>

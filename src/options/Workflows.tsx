@@ -13,9 +13,13 @@ import {
   updateThen,
   updateWhen,
 } from '../libs/workflow/store'
-import { sendWorkflows } from '../libs/workflow'
-import { Trigger, TriggerNames } from '../libs/workflow/triggers'
-import { Action, ActionNames } from '../libs/workflow/actions'
+import { sendWorkflows } from '../libs/workflow/options'
+import {
+  Action,
+  ActionNames,
+  Trigger,
+  TriggerNames,
+} from '../libs/workflow/types'
 
 const [store] = dataStore
 

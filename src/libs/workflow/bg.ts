@@ -1,7 +1,25 @@
-import { Workflow } from '.'
-import actions, { Action } from './actions'
+import { Host } from '../../types'
+import actions from './actions'
 import TriggerMonitor from './trigger-monitor'
-import { startTriggerListening } from './triggers'
+import { Action, Workflow } from './types'
+
+/**
+ * 开始监听用户的触发动作
+ * @description bg only
+ */
+export function startTriggerListening(monitor: TriggerMonitor) {
+  chrome.webRequest.onBeforeRequest.addListener(
+    (details) => {
+      if (details.method !== 'POST') {
+        return
+      }
+
+      monitor.setup(details)
+    },
+    { urls: [`${Host}/*`] },
+    ['requestBody'],
+  )
+}
 
 export function startWorkflowListening(monitor: TriggerMonitor) {
   chrome.runtime.onMessage.addListener((message) => {

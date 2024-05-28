@@ -2,10 +2,9 @@
  * This module is for backgrounded workflow processing.
  */
 
-import { Workflow } from '.'
 import { getRequestBody } from '../browser'
-import { Action, ActionHandler } from './actions'
 import { getWorkflows, startWorkflowListening } from './bg'
+import { Action, ActionHandler, Workflow } from './types'
 
 /**
  * 没有接口共用，单一用途的触发器
