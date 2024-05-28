@@ -1,7 +1,7 @@
 import { Host } from '../../types'
 import actions from './actions'
 import TriggerMonitor from './trigger-monitor'
-import { Action, Workflow } from './types'
+import { Action, MessageType, Workflow } from './types'
 
 /**
  * 开始监听用户的触发动作
@@ -23,9 +23,9 @@ export function startTriggerListening(monitor: TriggerMonitor) {
 
 export function startWorkflowListening(monitor: TriggerMonitor) {
   chrome.runtime.onMessage.addListener((message) => {
-    if (message.type === 'get_workflows') {
-      console.log('get_workflows', message.data)
-      const workflows = message.data as Workflow[]
+    if (message.type === MessageType.GetWorkflows) {
+      console.log('get_workflows', message.payload)
+      const workflows = message.payload as Workflow[]
       if (!workflows || workflows.length === 0) {
         return
       }

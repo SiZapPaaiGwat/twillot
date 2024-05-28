@@ -5,7 +5,7 @@
  */
 
 import { sendMessageToOptions } from '../browser'
-import { Task } from './types'
+import { MessageType, Task } from './types'
 
 /**
  * 同时向 options 页面发送消息，通知任务已添加
@@ -28,7 +28,7 @@ export async function addTask(task: Task) {
   tasks.push(task)
   console.log('Current tasks:', tasks)
   await saveTasks(tasks)
-  await sendMessageToOptions({ type: 'sync_task', task })
+  await sendMessageToOptions({ type: MessageType.SyncTasks, payload: task })
 }
 
 export async function getTasks(): Promise<Task[]> {

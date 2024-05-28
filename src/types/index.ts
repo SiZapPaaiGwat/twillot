@@ -280,18 +280,20 @@ const BASE_PATH = `${Host}/i/api/graphql/`
 
 export enum EndpointQuery {
   LIST_BOOKMARKS = 'UyNF_BgJ5d5MbtuVukyl7A',
-  CREATE_TWEET = 'BTWYQFqX-WbKZOhykzDpRg',
-  DELETE_TWEET = 'VaenaVgh5q5ih7kvyVjgtg',
-  TWEET_DETAIL = 'bFUhQzgl9zjo-teD0pAQZw',
+  CREATE_BOOKMARK = 'aoDbu3RHznuiSkQ9aNM67Q',
   DELETE_BOOKMARK = 'Wlmlj2-xzyS1GN3a6cj-mQ',
+  CREATE_TWEET = 'BTWYQFqX-WbKZOhykzDpRg',
+  TWEET_DETAIL = 'bFUhQzgl9zjo-teD0pAQZw',
+  DELETE_TWEET = 'VaenaVgh5q5ih7kvyVjgtg',
   USER_TWEETS = 'gQlOy4mD5C8M8fYxqa0FJg',
 }
 
 export enum Endpoint {
   LIST_BOOKMARKS = `${BASE_PATH}${EndpointQuery.LIST_BOOKMARKS}/Bookmarks`,
-  CREATE_TWEET = `${BASE_PATH}${EndpointQuery.CREATE_TWEET}/CreateTweet`,
-  DELETE_TWEET = `${BASE_PATH}${EndpointQuery.DELETE_TWEET}/DeleteTweet`,
+  CREATE_BOOKMARK = `${BASE_PATH}${EndpointQuery.CREATE_BOOKMARK}/CreateBookmark`,
   DELETE_BOOKMARK = `${BASE_PATH}${EndpointQuery.DELETE_BOOKMARK}/DeleteBookmark`,
+  CREATE_TWEET = `${BASE_PATH}${EndpointQuery.CREATE_TWEET}/CreateTweet`,
   TWEET_DETAIL = `${BASE_PATH}${EndpointQuery.TWEET_DETAIL}/TweetDetail`,
+  DELETE_TWEET = `${BASE_PATH}${EndpointQuery.DELETE_TWEET}/DeleteTweet`,
   USER_TWEETS = `${BASE_PATH}${EndpointQuery.USER_TWEETS}/UserTweets`,
 }

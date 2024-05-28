@@ -45,3 +45,14 @@ export interface Task {
   name: Action
   tweetId?: string
 }
+
+export interface Message {
+  type: MessageType
+  payload: any
+}
+
+export enum MessageType {
+  GetWorkflows = 'get_workflows',
+  GetTriggerResponse = 'get_trigger_response',
+  SyncTasks = 'sync_tasks',
+}
