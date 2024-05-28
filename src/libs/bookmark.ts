@@ -1,4 +1,4 @@
-import { addRecords, toRecord, getTweetId, getRecord } from './db/tweets'
+import { addRecords, getRecord } from './db/tweets'
 import {
   TimelineEntry,
   TimelineTimelineItem,
@@ -6,7 +6,7 @@ import {
   TimelineAddEntriesInstruction,
 } from '../types'
 import { addLocalItem, getLocalItem } from './browser'
-import { getBookmarks } from './api/twitter'
+import { getBookmarks, getTweetId, toRecord } from './api/twitter'
 import { executeAllTasks } from './workflow/store'
 
 export async function* syncAllBookmarks(forceSync = false) {

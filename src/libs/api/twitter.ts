@@ -7,11 +7,110 @@ import {
   TimelineTweet,
   Endpoint,
   EndpointQuery,
+  Tweet,
+  TweetBase,
+  TweetUnion,
+  EntityURL,
 } from '../../types'
 import { getAuthInfo } from '../browser'
+import { URL_REG } from '../text'
 import fetchWithTimeout, { FetchError } from '../xfetch'
-import { toRecord } from '../db/tweets'
 
+function replaceWithExpandedUrl(text: string, urls: EntityURL[]) {
+  if (urls.length === 0) {
+    return text
+  }
+
+  for (let item of urls) {
+    text = text.replace(new RegExp(item.url, 'g'), item.expanded_url)
+  }
+
+  return text
+}
+
+function getTweet(tweet?: TweetUnion): TweetBase | null {
+  if (!tweet) {
+    return null
+  }
+  if (tweet.__typename === 'TweetWithVisibilityResults') {
+    return tweet.tweet
+  }
+
+  return 'legacy' in tweet && tweet.legacy ? tweet : null
+}
+
+function getTweetFields(tweet?: TweetUnion) {
+  if (!tweet) {
+    return null
+  }
+  tweet = getTweet(tweet)
+  if (!tweet) {
+    return null
+  }
+
+  const user_legacy = tweet.core.user_results.result.legacy
+  const entities = tweet.legacy.extended_entities || tweet.legacy.entities
+  const media_items = entities?.media
+  let full_text = ''
+  if (tweet.note_tweet) {
+    full_text = tweet.note_tweet.note_tweet_results.result.text
+    full_text = replaceWithExpandedUrl(
+      full_text,
+      tweet.note_tweet.note_tweet_results.result.entity_set.urls,
+    )
+  } else {
+    full_text = tweet.legacy.full_text
+    full_text = replaceWithExpandedUrl(full_text, tweet.legacy.entities.urls)
+  }
+
+  return {
+    username: user_legacy.name,
+    screen_name: user_legacy.screen_name,
+    avatar_url: user_legacy.profile_image_url_https,
+    user_id: tweet.legacy.user_id_str,
+    tweet_id: tweet.legacy.id_str,
+    possibly_sensitive: tweet.legacy.possibly_sensitive,
+    full_text,
+    media_items,
+    lang: tweet.legacy.lang,
+    created_at: Math.floor(new Date(tweet.legacy.created_at).getTime() / 1000),
+  }
+}
+
+export function toRecord(
+  record: TimelineTweet,
+  sortIndex: string,
+): Tweet | null {
+  let tweet_base = getTweet(record.tweet_results.result)
+  if (!tweet_base) {
+    return null
+  }
+
+  const fields = getTweetFields(tweet_base)
+  const media_items = fields.media_items
+  const has_quote = !!tweet_base.quoted_status_result?.result
+
+  return {
+    ...fields,
+    sort_index: sortIndex,
+    has_gif: !!media_items?.some((item) => item.type === 'animated_gif'),
+    has_image: !!media_items?.some((item) => item.type === 'photo'),
+    has_video: !!media_items?.some((item) => item.type === 'video'),
+    has_quote,
+    is_long_text: !!tweet_base.note_tweet?.note_tweet_results,
+    has_link: URL_REG.test(fields.full_text),
+    quoted_tweet: has_quote
+      ? getTweetFields(tweet_base.quoted_status_result.result)
+      : null,
+  } as Tweet
+}
+
+export function getTweetId(
+  record: TimelineEntry<TimelineTweet, TimelineTimelineItem<TimelineTweet>>,
+): string {
+  let tweet = getTweet(record.content.itemContent.tweet_results.result)
+  return tweet?.legacy?.id_str || ''
+}
 const pageSize = 100
 
 const COMMON_FEATURES = {
@@ -199,7 +298,7 @@ export async function getBookmarks(cursor?: string) {
   }
 }
 
-export function getTweet(tweetId: string, cursor?: string) {
+export function getTweetDetails(tweetId: string, cursor?: string) {
   const variables = {
     focalTweetId: tweetId,
     with_rux_injections: false,
@@ -235,7 +334,7 @@ export function getTweet(tweetId: string, cursor?: string) {
  * sortIndex 依赖与书签同步接口
  */
 export async function getTweetConversations(tweetId: string) {
-  const json = await getTweet(tweetId)
+  const json = await getTweetDetails(tweetId)
   const wrapper =
     json.data.threaded_conversation_with_injections_v2.instructions
   const instructions = wrapper.find((i) => i.type === 'TimelineAddEntries') as
