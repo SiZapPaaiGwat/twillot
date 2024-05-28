@@ -4,7 +4,7 @@ import {
   TriggerReponsePayload,
 } from '../libs/workflow/types'
 import { Host } from '../types'
-import { triggerResponse } from '../libs/workflow/trigger'
+import { triggerResponseRetriever } from '../libs/workflow/trigger'
 
 const origOpen = XMLHttpRequest.prototype.open
 XMLHttpRequest.prototype.open = function (method: string, url: string) {
@@ -20,7 +20,7 @@ XMLHttpRequest.prototype.send = function (data) {
   const trigger = url.split('/').pop()
   if (trigger && trigger in TriggerNames) {
     this.addEventListener('load', async function () {
-      const parse = triggerResponse[trigger]
+      const parse = triggerResponseRetriever[trigger]
       const body =
         this.responseText && parse ? await parse(this.responseText) : {}
       window.postMessage(

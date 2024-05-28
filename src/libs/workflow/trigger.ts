@@ -6,7 +6,7 @@ import { TweetBase } from '../../types'
 import { getWorkflows } from '.'
 import { Action, ActionHandler, TriggerReponsePayload, Workflow } from './types'
 
-export const triggerResponse = {
+export const triggerResponseRetriever = {
   /**
    * 依赖于回复返回的  id
    */
@@ -63,6 +63,7 @@ export class TriggerMonitor {
         prevActionResponse: null,
       }
       for (const action of w.thenList) {
+        // TODO 为 action 添加自定义参数
         const handler = this.handlers[action]
         if (handler) {
           context.prevActionResponse = await handler(context)
