@@ -1,3 +1,5 @@
+import { Endpoint } from '../../types'
+
 /**
  * NOTE: 注意顺序可能影响单元测试
  */
@@ -5,10 +7,20 @@ export enum TriggerNames {
   CreateBookmark = 'Create a bookmark',
   DeleteBookmark = 'Delete a bookmark',
   CreateTweet = 'Create a tweet',
-  CreateNoteTweet = 'Create a note tweet',
-  CreateScheduledTweet = 'Create a scheduled tweet',
-  ReplyTweet = 'Reply to a tweet',
-  FavoriteTweet = 'Favorite a tweet',
+  // CreateNoteTweet = 'Create a note tweet',
+  // CreateScheduledTweet = 'Create a scheduled tweet',
+  // ReplyTweet = 'Reply to a tweet',
+  // FavoriteTweet = 'Favorite a tweet',
+}
+
+export enum TiggerUrls {
+  CreateBookmark = Endpoint.CREATE_BOOKMARK,
+  DeleteBookmark = Endpoint.DELETE_BOOKMARK,
+  CreateTweet = Endpoint.CREATE_TWEET,
+  // CreateNoteTweet = 'Create a note tweet',
+  // CreateScheduledTweet = 'Create a scheduled tweet',
+  // ReplyTweet = 'Reply to a tweet',
+  // FavoriteTweet = 'Favorite a tweet',
 }
 
 export type Trigger = keyof typeof TriggerNames
@@ -21,10 +33,14 @@ export enum ActionNames {
 
 export type Action = keyof typeof ActionNames
 
-export interface ActionContext {
-  triggerName: Trigger
-  requestBody: any
-  prevResponse: any
+export interface TriggerReponsePayload {
+  trigger: Trigger
+  request: { method: string; url: string; body: any }
+  response: { status: number; statusText: string; body: any }
+}
+
+export interface ActionContext extends TriggerReponsePayload {
+  prevActionResponse: any
 }
 
 export type ActionHandler = (context: ActionContext) => Promise<any>

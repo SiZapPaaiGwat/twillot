@@ -5,7 +5,7 @@
  */
 
 import { sendMessageToOptions } from '../browser'
-import { MessageType, Task } from './types'
+import { MessageType, Task, Workflow } from './types'
 
 /**
  * 同时向 options 页面发送消息，通知任务已添加
@@ -49,4 +49,9 @@ export async function removeTask(id: string) {
   } else {
     console.warn(`task ${id} not found`)
   }
+}
+
+export async function getWorkflows(): Promise<Workflow[]> {
+  const item = await chrome.storage.local.get('workflows')
+  return item.workflows || []
 }

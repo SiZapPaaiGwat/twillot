@@ -6,7 +6,7 @@ import { OptionName } from '../../types'
 import { sendWorkflows } from './options'
 import { getTweetConversations } from '../api/twitter'
 import { addRecords, countRecords, deleteRecord, getRecord } from '../db/tweets'
-import { getTasks, removeTask } from './task'
+import { getTasks, removeTask } from '.'
 import { Action, ActionNames, Trigger, TriggerNames, Workflow } from './types'
 
 const [store] = dataStore
