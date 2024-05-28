@@ -17,9 +17,22 @@ export interface Task {
  * 同时向 options 页面发送消息，通知任务已添加
  */
 export async function addTask(task: Task) {
-  console.log('add task', task)
-  const tasks = await getTasks()
+  let tasks = await getTasks()
+  /**
+   * 先取消删除再收藏会导致数据数据被删
+   * 对任务做些过滤以及合并
+   */
+  if (task.name === 'UnrollThread') {
+    tasks = tasks.filter(
+      (t) => t.name !== 'DeleteBookmark' || t.tweetId !== task.tweetId,
+    )
+  }
+  // 避免重复添加
+  tasks = tasks.filter(
+    (t) => t.name !== task.name || t.tweetId !== task.tweetId,
+  )
   tasks.push(task)
+  console.log('Current tasks:', tasks)
   await saveTasks(tasks)
   await sendMessageToOptions({ type: 'sync_task', task })
 }
